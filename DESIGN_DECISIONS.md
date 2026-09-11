@@ -4,7 +4,28 @@ Mirrors `D:\_Audio_KEXP\GOVERNANCE_RULES.md`'s habit for the pipeline project:
 every subjective call with real output impact gets written down with the
 reasoning and the numbers behind it, not just the conclusion. Scoped to this
 blog/visualization project specifically — pipeline-side decisions stay in
-`D:\_Audio_KEXP`, not duplicated here.
+`D:\_Audio_KEXP`, not duplicated here. User's explicit direction (2026-09-11):
+keep doing this as new decisions get made, not just for the first chart.
+
+## Standing rules (apply to every visual, not just the first one)
+
+**✅ Visuals get a dark surface; the blog's prose stays on a light surface.**
+Decided 2026-09-11. Every embedded chart renders on `#1a1a19` (the dataviz
+skill's validated dark chart surface) regardless of the page around it being
+light — a deliberate, consistent split between "reading" (light) and "looking
+at an instrument" (dark), not a per-chart aesthetic call. Consistent with
+patterns seen in data journalism (Bloomberg, FT graphics), and especially
+suited to radial/spoke layouts, which read naturally as a star chart or
+orbital diagram on black.
+
+**Consequence for every future ramp:** a color ramp validated for the light
+surface does **not** carry over to dark automatically. Each ramp needs its
+own dark-surface version, independently run through
+`validate_palette.js --mode dark --ordinal` (or the categorical six-check
+equivalent) — never an auto-flip. For an ordinal/sequential ramp specifically,
+note the check flips which end matters: on a light surface the *lightest*
+step needs the 2:1 contrast floor (it's nearest the surface); on dark, it's
+the *darkest* step that needs it.
 
 ## First visual: "25 years of KEXP Annual Best-Of lists" radial chart
 
@@ -51,12 +72,22 @@ the dataviz skill's `validate_palette.js --ordinal` (checks: monotone
 lightness, adjacent step gap >= 0.06 OKLCH L, light-end contrast >= 2:1
 against a `#fcfcfb` surface, single hue) — passed all four checks.
 
-| Tier | Meaning | Hex | Dot diameter |
-|---|---|---|---|
-| 1 | 1 album in 25 years | `#45c5c5` | 11px |
-| 2 | 2 albums in 25 years | `#009090` | 14px |
-| 3 | 3-9 albums in 25 years | `#005e5f` | 18px |
-| 4 | 10+ albums in 25 years | `#002f32` | 24px |
+**Shipped values (dark surface — see standing rule above)**, re-validated
+against `#1a1a19` with `validate_palette.js --mode dark --ordinal` (all 4
+checks pass; the darkest step is the one that needed the 2:1 floor here,
+not the lightest, since it's the step nearest the dark surface):
+
+| Tier | Meaning | Hex (dark surface) | Hex (light surface, reference only) | Dot diameter |
+|---|---|---|---|---|
+| 1 | 1 album in 25 years | `#74eeee` | `#45c5c5` | 11px |
+| 2 | 2 albums in 25 years | `#39bcbc` | `#009090` | 14px |
+| 3 | 3-9 albums in 25 years | `#008c8c` | `#005e5f` | 18px |
+| 4 | 10+ albums in 25 years | `#005e60` | `#002f32` | 24px |
+
+The light-surface column is kept for reference only (e.g. if a table/list
+view of the same data ever needs to sit on a light page) — it is not used
+on the chart itself, since the chart always renders dark per the standing
+rule.
 
 **Real constraint found while widening the range:** teal has much less room
 to get *lighter* than purple does before failing the 2:1 contrast floor —
@@ -111,8 +142,6 @@ have ever cracked 10+ albums on an Annual list in 25 years — **King Gizzard
 
 ### Not yet decided
 
-- Dark-mode version of the teal ramp (needs its own validated steps against
-  the dark surface — not the same ramp auto-flipped).
 - Whether the "3-9" and "10+" tier boundary should be re-examined once the
   actual chart is built and visually reviewed (per the dataviz skill's own
   step 7: render it and look at it before calling any of this final).
