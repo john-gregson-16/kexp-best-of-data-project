@@ -2,3 +2,9 @@
 /dist/
 node_modules/
 yarn-error.log
+
+# Workaround for previewing this project from the D:\_Audio_KEXP session
+# (stale PATH / wrong cwd there) -- not needed once this repo is opened as
+# its own Claude Code project, where .claude/launch.json's plain "npm run
+# dev" is enough on its own.
+dev.bat

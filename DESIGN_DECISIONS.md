@@ -77,17 +77,22 @@ against `#1a1a19` with `validate_palette.js --mode dark --ordinal` (all 4
 checks pass; the darkest step is the one that needed the 2:1 floor here,
 not the lightest, since it's the step nearest the dark surface):
 
-| Tier | Meaning | Hex (dark surface) | Hex (light surface, reference only) | Dot diameter |
+| Tier | Meaning | Hex (dark surface) | Hex (light surface, reference only) | Dot diameter (actual chart) |
 |---|---|---|---|---|
-| 1 | 1 album in 25 years | `#74eeee` | `#45c5c5` | 11px |
-| 2 | 2 albums in 25 years | `#39bcbc` | `#009090` | 14px |
-| 3 | 3-9 albums in 25 years | `#008c8c` | `#005e5f` | 18px |
-| 4 | 10+ albums in 25 years | `#005e60` | `#002f32` | 24px |
+| 1 | 1 album in 25 years | `#74eeee` | `#45c5c5` | 4.4px |
+| 2 | 2 albums in 25 years | `#39bcbc` | `#009090` | 5.6px |
+| 3 | 3-9 albums in 25 years | `#008c8c` | `#005e5f` | 7.2px |
+| 4 | 10+ albums in 25 years | `#005e60` | `#002f32` | 9.6px |
 
 The light-surface column is kept for reference only (e.g. if a table/list
 view of the same data ever needs to sit on a light page) — it is not used
 on the chart itself, since the chart always renders dark per the standing
-rule.
+rule. **Dot diameters shrank from the original 11-24px mockup once real data
+was in place** — 2,322 dots across 25 spokes (up to 120 per spoke) need to
+be visibly smaller than the illustrative widget mockup to avoid overlapping;
+the chart's own legend swatches are shown at 2.5x the actual dot size
+(11/14/18/24px) specifically for legend legibility, not because the chart
+dots themselves are that large.
 
 **Real constraint found while widening the range:** teal has much less room
 to get *lighter* than purple does before failing the 2:1 contrast floor —
@@ -149,3 +154,31 @@ have ever cracked 10+ albums on an Annual list in 25 years — **King Gizzard
 - Whether the "3-9" and "10+" tier boundary should be re-examined once the
   actual chart is built and visually reviewed (per the dataviz skill's own
   step 7: render it and look at it before calling any of this final).
+
+### First build (2026-09-11) — verified against real data, one real Framework gotcha found
+
+Built at `src/annual-circle.md`, data at `src/data/annual_circle_2001_2025.csv`
+(exported by the private `D:\_Audio_KEXP\scripts\utilities\export_blog_annual_circle_data.py`
+— that script is not committed here, only its output, per the data-sharing
+model above). Verified working: dark surface, correct per-year spoke length
+(2012 visibly longer, matching its real 120-entry list), hover tooltips
+(artist/album/rank), and the on-screen tier color counts match the source
+data exactly (583/439/1266/34 circles at `#74eeee`/`#39bcbc`/`#008c8c`/`#005e60`).
+
+**Reusable technical gotcha for every future chart:** Framework's `resize()`
+helper skips calling its render callback entirely if the measured container
+width is `0` — and a `display:flex; justify-content:center` wrapper around
+an *empty* child can measure that child at 0 width before anything is
+rendered into it, so the chart silently never appears (no error, nothing in
+the console). Fix: don't center the chart's wrapper with flex; use
+`max-width` + `margin: 0 auto` on a block-level container instead, which
+always gives the child real width to measure against.
+
+**Second gotcha:** `rows` (a `FileAttachment(...).csv()` promise) resolves
+correctly when read inside a fenced &#96;&#96;&#96;js cell, but did **not**
+reliably resolve when referenced from an inline `${...}` markdown
+interpolation in this Framework version — confirmed directly (a fenced cell
+printing `rows.length` worked; the identical inline `${rows.length}` stayed
+blank forever). Any FileAttachment-derived value that feeds a chart should
+be consumed inside a fenced cell, not built directly in an inline
+expression.
