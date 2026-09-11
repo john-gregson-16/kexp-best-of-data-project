@@ -49,7 +49,7 @@ deliberate gap (not a closed circle) avoids implying the timeline is cyclical.
 
 ### List sizes — real counts, not assumed
 
-23 of 25 years have exactly 91 entries. Three real outliers: **2012 has 120**,
+22 of 25 years have exactly 91 entries. Three real outliers: **2012 has 120**,
 **2024 and 2025 both have 100**. User confirmed comfortable with these
 producing visibly longer spokes rather than normalizing all spokes to equal
 length.
@@ -105,24 +105,28 @@ as tasteful once actually colored, not just abstractly reasonable.
 
 ### Tier cutoffs — 1 / 2 / 3-9 / 10+, chosen on a real cliff in the data, not roundness
 
-Real distribution (1,095 distinct artists across all 25 Annual lists,
+Real distribution (1,094 distinct artists across all 25 Annual lists,
 queried from `dim_list_entries.xlsx` joined through `dim_artist_release.xlsx`
-for canonical artist IDs):
+for canonical artist IDs — corrected 2026-09-11 from an initial 1,095/585/218
+figure that grouped by (artist_id, artist_name) instead of artist_id alone;
+one real artist, Rosalía, has two albums recorded under two different name
+spellings and was silently double-counted as two separate "1 album" artists
+until the export script fixed it by grouping on the canonical ID only):
 
 | Albums (25-yr total) | Artists | % of all artists |
 |---|---|---|
-| 1 | 585 | 53.4% |
-| 2 | 218 | 19.9% |
+| 1 | 583 | 53.3% |
+| 2 | 219 | 20.0% |
 | 3-9 | 289 | 26.4% |
 | 10+ | 3 | 0.3% |
 
-**User's own real finding, worth carrying into the write-up:** 53.4% of
+**User's own real finding, worth carrying into the write-up:** 53.3% of
 every artist who has ever made an Annual list has exactly *one* album on it,
 ever — "one and done" is the majority case, not an edge case.
 
 **Quartiles don't work here, confirmed with the real numbers, not assumed:**
-the "1 album" cohort alone (585) already exceeds two quartiles' worth of the
-1,095-artist population before any cutoff is drawn — no split point can
+the "1 album" cohort alone (583) already exceeds two quartiles' worth of the
+1,094-artist population before any cutoff is drawn — no split point can
 produce four balanced groups given this shape.
 
 **3-9 / 10+ chosen over 3-8/9+ and 3-7/8+ specifically because it's the
