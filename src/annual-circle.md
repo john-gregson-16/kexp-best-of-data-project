@@ -797,7 +797,7 @@ function gapStatTiles(stats) {
     {
       label: "Longest span, first appearance to last",
       value: `${stats.maxSpan.span} years`,
-      caption: `${stats.maxSpan.name}, ${stats.maxSpan.first}–${stats.maxSpan.last} — just ${stats.maxSpan.appearances} appearances across the whole span.`,
+      caption: `${stats.maxSpan.name}, ${stats.maxSpan.first}–${stats.maxSpan.last} — with ${stats.maxSpan.appearances} appearances across the whole span.`,
     },
   ];
 
