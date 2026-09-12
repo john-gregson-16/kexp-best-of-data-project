@@ -745,3 +745,93 @@ list *matures* over its first decade as a growing pool of past artists
 becomes available to return, then settles into a steady state where
 roughly a third of any given year's list is a name that's never appeared
 before — not shrinking further, just holding.
+
+### When artists come back, how long is the wait?
+
+The charts above already show *that* repeat appearances happen. These
+three numbers are about the *timing*.
+
+```js
+const gapStats = (() => {
+  const byArtist = new Map();
+  for (const d of rows) {
+    if (!byArtist.has(d.artist_id)) byArtist.set(d.artist_id, {name: d.artist_name, years: []});
+    byArtist.get(d.artist_id).years.push(d.list_year);
+  }
+  const gaps = [];
+  let maxGap = {gap: 0};
+  let maxSpan = {span: 0};
+  for (const [, info] of byArtist) {
+    const ys = Array.from(new Set(info.years)).sort((a, b) => a - b);
+    if (ys.length < 2) continue;
+    for (let i = 1; i < ys.length; i++) {
+      const g = ys[i] - ys[i - 1];
+      gaps.push(g);
+      if (g > maxGap.gap) maxGap = {gap: g, name: info.name, from: ys[i - 1], to: ys[i]};
+    }
+    const span = ys[ys.length - 1] - ys[0];
+    if (span > maxSpan.span) {
+      maxSpan = {span, name: info.name, first: ys[0], last: ys[ys.length - 1], appearances: ys.length};
+    }
+  }
+  gaps.sort((a, b) => a - b);
+  const median = gaps[Math.floor(gaps.length / 2)];
+  const backToBackPct = (100 * gaps.filter((g) => g === 1).length) / gaps.length;
+  return {median, backToBackPct, maxGap, maxSpan};
+})();
+```
+
+```js
+function gapStatTiles(stats) {
+  const tileDefs = [
+    {
+      label: "Median gap between an artist's appearances",
+      value: `${stats.median} years`,
+      caption: `Only ${stats.backToBackPct.toFixed(1)}% of comebacks are back-to-back (a 1-year gap) — most repeat artists take a break first.`,
+    },
+    {
+      label: "Longest gap between two appearances",
+      value: `${stats.maxGap.gap} years`,
+      caption: `${stats.maxGap.name}, ${stats.maxGap.from} → ${stats.maxGap.to}.`,
+    },
+    {
+      label: "Longest span, first appearance to last",
+      value: `${stats.maxSpan.span} years`,
+      caption: `${stats.maxSpan.name}, ${stats.maxSpan.first}–${stats.maxSpan.last} — just ${stats.maxSpan.appearances} appearances across the whole span.`,
+    },
+  ];
+
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "display:flex;flex-wrap:wrap;";
+
+  tileDefs.forEach((t, i) => {
+    const tile = document.createElement("div");
+    tile.style.cssText = `flex:1 1 220px;padding:0 1.5rem;${i > 0 ? "border-left:1px solid #33322f;" : ""}`;
+
+    const label = document.createElement("div");
+    label.style.cssText = "color:#898781;font-size:12px;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.5rem;";
+    label.textContent = t.label;
+
+    const value = document.createElement("div");
+    value.style.cssText = "color:#f0efec;font-size:32px;font-weight:600;font-family:var(--sans-serif);line-height:1.1;";
+    value.textContent = t.value;
+
+    const caption = document.createElement("div");
+    caption.style.cssText = "color:#c9c8c3;font-size:13px;margin-top:0.6rem;line-height:1.4;";
+    caption.textContent = t.caption;
+
+    tile.append(label, value, caption);
+    wrap.append(tile);
+  });
+
+  return wrap;
+}
+```
+
+<div class="card" style="background:#1a1a19;padding:1.75rem 1.5rem;max-width:920px;margin:0 auto;">
+
+```js
+gapStatTiles(gapStats)
+```
+
+</div>

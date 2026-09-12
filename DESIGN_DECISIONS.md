@@ -534,3 +534,44 @@ occurrence on this same page, it may simply be a real cost of this
 project's size/session length rather than something tied to any specific
 edit -- treat it as an environment quirk to route around, not a signal to
 keep debugging the file's code.
+
+## Comeback-gap stat tiles (2026-09-12)
+
+**Form: three stat tiles in a row, not a chart.** Per the `dataviz` skill's
+"is it even a chart?" table, "a handful of headline numbers" is a KPI row
+of stat tiles, not a plotted chart -- these three facts (median gap,
+longest gap, longest span) are single values with a named example, not a
+distribution worth graphing.
+
+**Color reused the tier-1 yellow question was considered and rejected** --
+unlike the turnover line chart, these tiles aren't the same "1st
+appearance" concept, so they stay neutral (light text on the dark card,
+no accent hue) rather than forcing an association that isn't really there.
+
+**This round's environment failure was worse than the first two, and
+definitively proved page-independent.** Every chart on the page (including
+the wheel) went blank with zero console/server errors, and unlike the
+first two occurrences, **three consecutive full `preview_stop` +
+`preview_start` + fresh-tab cycles did not fix it** -- including one round
+where the underlying node processes were killed directly (`taskkill`
+equivalent) rather than just calling `preview_stop`, ruling out a leaked
+zombie process as the cause. Decisive test: navigating to Framework's own
+*unmodified* `/example-dashboard` template page -- completely unrelated to
+any code in this project -- also rendered zero charts. That confirms the
+failure is entirely in this session's dev-server/browser-pane environment,
+not in this file or any code change.
+
+**Verification fallback used instead:** with live rendering unavailable,
+correctness was confirmed by fetching the real CSV directly
+(`/_file/data/annual_circle_2001_2025.csv?sha=...` -- the actual
+content-hashed path Framework's `FileAttachment` resolves to internally,
+extracted from the page's own compiled script; a plain `/data/...` path
+404s and is a dead end for this kind of manual check) and re-running the
+exact `gapStats` computation in isolation. Result matched the
+already-agreed numbers exactly: median 3, 14.3% back-to-back, longest gap
+19 years (The Hives, 2004->2023), longest span 24 years (Mogwai,
+2001->2025, 6 appearances). Committed on the strength of that
+independent verification plus visual consistency with every other
+successfully-rendered element on this page (same card/text-color/spacing
+system), without a final live screenshot. **Worth a spot-check next time
+the dev server is opened normally**, outside this session's environment.
