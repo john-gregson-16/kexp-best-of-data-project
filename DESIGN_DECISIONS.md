@@ -741,3 +741,38 @@ for attention the way the numbered key does.
 **Verified live:** both the enlarged/brightened key and the new radial
 arrow render correctly in the empty gap beside 2001, with no overlap with
 dots, labels, or the existing curved arrow.
+
+### Second follow-up (2026-09-12): consolidated into one top-right "how to read this" cluster
+
+**User's real-use feedback, again from actually looking at it:** two
+problems with the previous placement. First, the bottom-right corner
+(where the numbered key lived) sits close to the 2014 spoke, which is near
+the bottom of the wheel -- and 2014's own snaking bands already show a
+visually similar alternating pattern at that scale, inviting the reader to
+mistake the *legend* for more *data*. Second, having the radial arrow next
+to 2001 and the numbered key at the opposite corner split one coherent
+idea ("here's how to read this chart") into two disconnected UI elements
+in unrelated corners.
+
+**Fix: moved everything into a single cluster in the top-right corner.**
+The radial arrow that lived next to 2001 is gone entirely -- rebuilt as a
+short vertical arrow standing directly beside the numbered key, pointing
+from the "1-5" row up to the "10-9-8-7-6" row, recolored from the muted
+`#6b6a64` to the same bright `#c9c8c3` as the key itself, so the whole
+cluster reads as one idea in one color rather than two separate hints in
+two different chrome tones. The **hub's original curved arrow stays
+exactly where and what it was** -- clockwise year direction is a
+different, orthogonal piece of information from "how rank snakes within a
+spoke," and conflating the two into one cluster would have been a step
+backward.
+
+**Row order preserved through the move:** 1-5 is still the row nearer the
+metaphorical hub (drawn lower, closer to where a real spoke's inner band
+would be) and 10-6 is still the outward row (drawn above it) -- moving
+corners didn't invert the metaphor, just relocated it somewhere it can't
+be confused with real data.
+
+**Verified live:** the numbered key, its arrow, and blank space around
+both now sit together in the top-right corner with no nearby spoke's own
+pattern competing with it, and the hub's curved arrow is untouched next to
+2001.
