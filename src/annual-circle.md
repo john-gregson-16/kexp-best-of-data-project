@@ -266,6 +266,37 @@ function annualCircle(data, selectedYears, selectedArtist) {
       .attr("d", `M ${tip[0]} ${tip[1]} L ${p1[0]} ${p1[1]} L ${p2[0]} ${p2[1]} Z`)
       .attr("fill", "#6b6a64")
       .attr("opacity", 0.7);
+
+    // Radial "read outward" arrow -- a straight spoke-like line with its own
+    // arrowhead at the outer end, tucked just inside the year gap immediately
+    // counterclockwise of 2001 (empty of dots by construction), showing rank
+    // increases from hub to rim, complementing the curved arrow's clockwise
+    // year cue.
+    const radialDeg = startDeg - 8;
+    const rInner = 26, rOuter = 150;
+    const [rx0, ry0] = polar(radialDeg, rInner);
+    const [rx1, ry1] = polar(radialDeg, rOuter);
+
+    svg.append("line")
+      .attr("x1", rx0).attr("y1", ry0)
+      .attr("x2", rx1).attr("y2", ry1)
+      .attr("stroke", "#6b6a64")
+      .attr("stroke-width", 2)
+      .attr("stroke-linecap", "round")
+      .attr("opacity", 0.7);
+
+    const radialRad = toRad(radialDeg);
+    const dir = [Math.cos(radialRad), Math.sin(radialRad)];
+    const perp2 = [-dir[1], dir[0]];
+    const rTip = [rx1 + dir[0] * headLen * 0.6, ry1 + dir[1] * headLen * 0.6];
+    const rBase = [rx1 - dir[0] * headLen * 0.4, ry1 - dir[1] * headLen * 0.4];
+    const rp1 = [rBase[0] + perp2[0] * headWidth / 2, rBase[1] + perp2[1] * headWidth / 2];
+    const rp2 = [rBase[0] - perp2[0] * headWidth / 2, rBase[1] - perp2[1] * headWidth / 2];
+
+    svg.append("path")
+      .attr("d", `M ${rTip[0]} ${rTip[1]} L ${rp1[0]} ${rp1[1]} L ${rp2[0]} ${rp2[1]} Z`)
+      .attr("fill", "#6b6a64")
+      .attr("opacity", 0.7);
   }
 
   // Year labels, placed just past each spoke's own last band -- on the pure
@@ -328,15 +359,15 @@ function annualCircle(data, selectedYears, selectedArtist) {
   // 6-10 right-to-left) -- the wedge/grid layout's least self-evident
   // detail. Wordless, matching the hub arrow's own style.
   {
-    const keyR = 6;
-    const keyGap = 18;
-    const keyMarginRight = 34;
-    const keyMarginBottom = 34;
+    const keyR = 11;
+    const keyGap = 28;
+    const keyMarginRight = 46;
+    const keyMarginBottom = 46;
     const rightX = size - keyMarginRight;
     const bottomY = size - keyMarginBottom;
     const rowInner = [1, 2, 3, 4, 5];
     const rowOuter = [10, 9, 8, 7, 6];
-    const keyG = svg.append("g").attr("opacity", 0.75);
+    const keyG = svg.append("g").attr("opacity", 0.95);
     [
       {row: rowInner, y: bottomY},
       {row: rowOuter, y: bottomY - keyGap},
@@ -345,11 +376,11 @@ function annualCircle(data, selectedYears, selectedArtist) {
         const cx2 = rightX - (row.length - 1 - i) * keyGap;
         keyG.append("circle")
           .attr("cx", cx2).attr("cy", y).attr("r", keyR)
-          .attr("fill", "none").attr("stroke", "#6b6a64").attr("stroke-width", 1.2);
+          .attr("fill", "none").attr("stroke", "#c9c8c3").attr("stroke-width", 1.5);
         keyG.append("text")
           .attr("x", cx2).attr("y", y + 1)
           .attr("text-anchor", "middle").attr("dominant-baseline", "central")
-          .attr("fill", "#6b6a64").attr("font-size", 8)
+          .attr("fill", "#c9c8c3").attr("font-size", 12)
           .text(n);
       });
     });

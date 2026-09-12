@@ -713,3 +713,31 @@ render at only 8px): the ten `<text>` nodes read exactly `1,2,3,4,5` at
 the lower y-coordinate and `10,9,8,7,6` at the row above it, left to
 right by x-coordinate -- confirms both the content and the row order are
 correct, independent of how legible they are at a quick glance.
+
+### Follow-up (2026-09-12): key was too small to read; added a radial reading-direction cue too
+
+**User's real-use feedback:** the reading-order key (previous entry) was
+technically correct per the DOM check, but at 8px glyphs and `#6b6a64`
+(the same muted grey as the hub arrow) it was "very small" and "barely
+readable" in practice -- a reminder that a DOM-verified value isn't the
+same claim as "legible at normal viewing size," and both need checking.
+**Fix:** nearly doubled the key's scale (`keyR` 6->11, `keyGap` 18->28,
+font-size 8->12) and switched its color from the wordless-arrow grey to
+`#c9c8c3` -- the same color already used for the tier-name legend text
+below the chart -- so it reads as clearly as any other on-chart label
+rather than as a faint afterthought.
+
+**Second addition, same conversation:** a straight radial arrow --
+mirroring the existing curved hub arrow's style and construction (`polar()`
+helper, same arrowhead math) -- placed 8 degrees counterclockwise of the
+2001 spoke, squarely inside the already-empty 30-degree year gap. It
+points outward from hub to rim, making explicit what the curved arrow
+doesn't: rank increases from center to edge, not just "read the years
+clockwise." Deliberately kept at the *original* muted grey (`#6b6a64`),
+not the brightened key color -- it's chrome explaining the layout
+mechanic, same family as the curved arrow, not a legend needing to compete
+for attention the way the numbered key does.
+
+**Verified live:** both the enlarged/brightened key and the new radial
+arrow render correctly in the empty gap beside 2001, with no overlap with
+dots, labels, or the existing curved arrow.
