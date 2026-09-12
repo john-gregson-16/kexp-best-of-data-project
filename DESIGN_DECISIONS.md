@@ -353,3 +353,61 @@ family for future visuals on this blog, not treated as one-off to this
 chart. Next visual should start from this yellow/magenta/violet/blue-violet
 family (or the same lightness-first, hue-from-peak-chroma *method* on a new
 hue set) rather than reintroducing single-hue teal by default.
+
+## Below-the-fold key findings (2026-09-12)
+
+First two "key findings" charts, appended below the wheel on the same page
+rather than a separate page -- per the user's framing, these exist to
+surface conclusions the wheel itself doesn't state outright, not just
+re-plot the same dots. Both charts and their surrounding prose (kept as
+shipped, not placeholder copy) were built following the `dataviz` skill's
+form-choice table: magnitude-across-categories -> bar chart; part-to-whole
+trend over time -> stacked bar. Both reuse the locked
+yellow/magenta/violet/blue-violet tier ramp exactly, so a reader carries the
+same color->tier mapping from the wheel into these charts without
+relearning it. Both charts compute their numbers live from `rows` (the same
+loaded CSV), nothing hardcoded or pre-aggregated -- so they can't drift out
+of sync with the wheel above them.
+
+**Chart 1, "How rare is a repeat appearance?"** -- a plain bar chart of
+distinct-artist counts per tier (583 / 219 / 289 / 3 of 1,094 total, i.e.
+53.3% / 20.0% / 26.4% / 0.3%). Deliberately artist-level counts, not the
+row/entry-level counts the wheel's dots use (583/439/1266/34) -- "cohort
+size" is a question about how many *artists* fall in each tier, and the
+row-level counts would overstate tier 3 by counting the same prolific
+artists' many list appearances repeatedly.
+
+**Chart 2, "Does it matter when an artist first shows up?"** -- built to
+test the user's own hypothesis (arbitrary 2001 start date should shift
+tier composition over the 25 years) against real per-year data rather than
+taking it on faith. **Finding contradicts the hypothesized direction, but
+confirms the underlying mechanism:** tier-1 share is not a one-way drift --
+it's a U-shape, elevated at *both* window edges (2001-2004 and 2024-2025,
+each >30%) and lowest mid-window (2008/2017/2019-2020, 12-14%). Named
+correctly for the write-up: **left-truncation** at the 2001 edge (a legacy
+act's pre-2001 output is invisible to a metric that only counts 2001-2025)
+and **right-censoring** at the 2025 edge (a brand-new act hasn't had
+calendar time yet to earn a second listing) -- symmetric edge effects, not
+a single directional drift. Verified against a proper quote-aware CSV
+parse (an ad hoc terminal check during development used a naive
+comma-split and mis-parsed one row where a title contained a comma --
+the live chart itself, built on Framework's real CSV parser, was correct
+throughout; the terminal-only bug never reached the page).
+
+**Mark-spec compliance notes:** stacked segments separated by a 2px
+surface-color gap (skill spec), only the topmost segment of each stack
+rounded (data-end), bottom/interior segments square: bars grow from a
+single baseline. Legend present for both charts (4-series floor from the
+skill's series-count ladder) using rect swatches for the stacked chart
+(mirrors the bar/area mark shape) vs. the wheel's dot swatches (mirrors its
+circular marks). Hover tooltip lists every tier's share at that year in one
+readout (interaction.md's "one tooltip, every series"), not gated behind
+per-segment hover.
+
+**Open for later:** more below-the-fold findings, restricted to what's
+derivable from the raw list structure alone (year, rank, list size, artist,
+album) before any outside metadata (genre, geography, play counts) enters
+the picture -- candidates discussed: rank-vs-eventual-tier correlation
+(do chart-toppers skew veteran?), year-over-year list turnover/freshness
+rate (a natural companion to the U-shape chart), and multi-year gap/comeback
+patterns for repeat artists. None built yet.

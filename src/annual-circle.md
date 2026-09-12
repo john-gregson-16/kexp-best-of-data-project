@@ -211,3 +211,234 @@ annualCircle(rows, selectedYears)
 </div>
 
 </div>
+
+## Key findings
+
+The wheel above shows every entry from every list. The two charts below pull
+back to ask what those entries add up to.
+
+### How rare is a repeat appearance?
+
+```js
+const artistTier = new Map();
+for (const d of rows) if (!artistTier.has(d.artist_id)) artistTier.set(d.artist_id, d.tier);
+const totalArtists = artistTier.size;
+const tierArtistCounts = d3.rollup(Array.from(artistTier.values()), (v) => v.length, (t) => t);
+```
+
+```js
+function rightRoundedRectPath(x, y, w, h, r) {
+  const rr = Math.min(r, h / 2, Math.max(w, 0));
+  if (w <= rr) return `M${x},${y} h${w} v${h} h${-w} Z`;
+  return `M${x},${y} H${x + w - rr} A${rr},${rr} 0 0 1 ${x + w},${y + rr} V${y + h - rr} A${rr},${rr} 0 0 1 ${x + w - rr},${y + h} H${x} Z`;
+}
+
+function tierCohortChart(totalArtists, tierArtistCounts) {
+  const tierLabel = {1: "1 album", 2: "2 albums", 3: "3–9 albums", 4: "10+ albums"};
+  const tiers = [1, 2, 3, 4];
+  const width = 640;
+  const rowH = 54, barH = 22, padTop = 12, padBottom = 12, labelW = 96, tipW = 150;
+  const height = padTop + tiers.length * rowH + padBottom;
+  const plotW = width - labelW - tipW;
+  const maxCount = d3.max(tiers, (t) => tierArtistCounts.get(t) || 0);
+  const x = d3.scaleLinear().domain([0, maxCount]).range([0, plotW]);
+
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("width", width)
+    .attr("height", height)
+    .attr("style", "background:#1a1a19;border-radius:12px;max-width:100%;height:auto;font-family:var(--sans-serif);");
+
+  const g = svg.append("g").attr("transform", `translate(${labelW},${padTop})`);
+  const row = g.selectAll("g.row").data(tiers).join("g")
+    .attr("transform", (t, i) => `translate(0,${i * rowH + (rowH - barH) / 2})`);
+
+  row.append("text")
+    .attr("x", -12)
+    .attr("y", barH / 2)
+    .attr("text-anchor", "end")
+    .attr("dominant-baseline", "middle")
+    .attr("fill", "#c9c8c3")
+    .attr("font-size", 13)
+    .text((t) => tierLabel[t]);
+
+  row.append("path")
+    .attr("d", (t) => rightRoundedRectPath(0, 0, Math.max(3, x(tierArtistCounts.get(t) || 0)), barH, 4))
+    .attr("fill", (t) => tierColor[t])
+    .style("transition", "opacity 0.15s")
+    .on("pointerenter", function () { d3.select(this).style("opacity", 0.75); })
+    .on("pointerleave", function () { d3.select(this).style("opacity", 1); });
+
+  row.append("text")
+    .attr("x", (t) => x(tierArtistCounts.get(t) || 0) + 10)
+    .attr("y", barH / 2)
+    .attr("dominant-baseline", "middle")
+    .attr("fill", "#c9c8c3")
+    .attr("font-size", 13)
+    .text((t) => {
+      const c = tierArtistCounts.get(t) || 0;
+      const pct = (100 * c / totalArtists).toFixed(1);
+      return `${c.toLocaleString()} artists · ${pct}%`;
+    });
+
+  return svg.node();
+}
+```
+
+<div class="card" style="background:#1a1a19;padding:1.5rem;max-width:820px;margin:0 auto;">
+
+```js
+tierCohortChart(totalArtists, tierArtistCounts)
+```
+
+</div>
+
+Of the ${totalArtists.toLocaleString()} distinct artists who have ever made
+an Annual list, ${((100 * tierArtistCounts.get(1)) / totalArtists).toFixed(1)}%
+have exactly *one* album on it, ever. "One and done" is the majority case,
+not the exception — and only ${tierArtistCounts.get(4)} artists in 25 years
+have cracked double digits.
+
+### Does it matter *when* an artist first shows up?
+
+You'd expect an artist's tier to just reflect how good and prolific they
+are. But the tier is a 25-year *total*, and the 25-year window itself has
+edges — so an artist's odds of reaching a high tier also depend on how much
+of that window they had to work with.
+
+```js
+const yearStats = years.map((yr) => {
+  const entries = rows.filter((d) => d.list_year === yr);
+  const counts = {1: 0, 2: 0, 3: 0, 4: 0};
+  for (const d of entries) counts[d.tier]++;
+  return {year: yr, counts, total: entries.length};
+});
+```
+
+```js
+function tierTrendChart(yearStats) {
+  const tiers = [1, 2, 3, 4];
+  const width = 880, height = 380;
+  const marginL = 40, marginR = 12, marginT = 16, marginB = 40;
+  const plotW = width - marginL - marginR;
+  const plotH = height - marginT - marginB;
+  const gap = 2;
+
+  const x = d3.scaleBand().domain(yearStats.map((d) => d.year)).range([0, plotW]).padding(0.22);
+  const y = d3.scaleLinear().domain([0, 100]).range([plotH, 0]);
+
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("width", width)
+    .attr("height", height)
+    .attr("style", "background:#1a1a19;border-radius:12px;max-width:100%;height:auto;font-family:var(--sans-serif);");
+
+  const g = svg.append("g").attr("transform", `translate(${marginL},${marginT})`);
+
+  const yTicks = [0, 25, 50, 75, 100];
+  g.append("g").selectAll("line").data(yTicks).join("line")
+    .attr("x1", 0).attr("x2", plotW)
+    .attr("y1", (d) => y(d)).attr("y2", (d) => y(d))
+    .attr("stroke", "#33322f").attr("stroke-width", 1);
+  g.append("g").selectAll("text").data(yTicks).join("text")
+    .attr("x", -8).attr("y", (d) => y(d))
+    .attr("text-anchor", "end").attr("dominant-baseline", "middle")
+    .attr("fill", "#898781").attr("font-size", 10)
+    .text((d) => d + "%");
+
+  g.append("g").selectAll("text").data(yearStats).join("text")
+    .attr("x", (d) => x(d.year) + x.bandwidth() / 2)
+    .attr("y", plotH + 10)
+    .attr("fill", "#898781")
+    .attr("font-size", 9)
+    .attr("text-anchor", "end")
+    .attr("transform", (d) => `rotate(-55,${x(d.year) + x.bandwidth() / 2},${plotH + 10})`)
+    .text((d) => d.year);
+
+  const tooltip = d3.select(document.createElement("div"))
+    .attr("style", "position:fixed;pointer-events:none;background:#1a1a19;color:#f0efec;border:1px solid #383835;border-radius:8px;padding:8px 10px;font-size:12px;font-family:var(--sans-serif);opacity:0;transition:opacity 0.1s;z-index:10;min-width:150px;");
+  document.body.appendChild(tooltip.node());
+  const tierLabel = {1: "1 album", 2: "2 albums", 3: "3–9 albums", 4: "10+ albums"};
+
+  const bars = g.selectAll("g.bar").data(yearStats).join("g")
+    .attr("transform", (d) => `translate(${x(d.year)},0)`);
+
+  bars.each(function (d) {
+    const gEl = d3.select(this);
+    let cum = 0;
+    tiers.forEach((t, i) => {
+      const cnt = d.counts[t] || 0;
+      const pct = (100 * cnt) / d.total;
+      const y0 = cum, y1 = cum + pct;
+      cum = y1;
+      const yTop = y(y1), yBot = y(y0);
+      const isTop = i === tiers.length - 1;
+      const segH = Math.max(0, yBot - yTop - (isTop ? 0 : gap));
+      const path = isTop
+        ? (() => {
+            const r = 3, w = x.bandwidth();
+            const hh = Math.max(0, segH);
+            if (hh <= r) return `M${0},${yTop} h${w} v${hh} h${-w} Z`;
+            return `M${0},${yTop + r} A${r},${r} 0 0 1 ${r},${yTop} H${w - r} A${r},${r} 0 0 1 ${w},${yTop + r} V${yTop + hh} H${0} Z`;
+          })()
+        : `M0,${yTop} h${x.bandwidth()} v${segH} h${-x.bandwidth()} Z`;
+      gEl.append("path").attr("d", path).attr("fill", tierColor[t]);
+    });
+  });
+
+  bars.append("rect")
+    .attr("x", 0).attr("y", 0)
+    .attr("width", x.bandwidth()).attr("height", plotH)
+    .attr("fill", "transparent")
+    .on("pointerenter pointermove", function (event, d) {
+      d3.select(this.parentNode).selectAll("path").style("opacity", 0.8);
+      const lines = tiers.map((t) => {
+        const c = d.counts[t] || 0;
+        const pct = ((100 * c) / d.total).toFixed(1);
+        return `<div style="display:flex;justify-content:space-between;gap:12px"><span>${tierLabel[t]}</span><b>${pct}%</b></div>`;
+      });
+      tooltip
+        .style("opacity", 1)
+        .html(`<b>${d.year}</b> · ${d.total} entries<br>${lines.join("")}`)
+        .style("left", event.clientX + 14 + "px")
+        .style("top", event.clientY + 14 + "px");
+    })
+    .on("pointerleave", function () {
+      d3.select(this.parentNode).selectAll("path").style("opacity", 1);
+      tooltip.style("opacity", 0);
+    });
+
+  return svg.node();
+}
+```
+
+<div class="card" style="background:#1a1a19;padding:1.5rem 1.5rem 0.5rem;max-width:900px;margin:0 auto;">
+
+```js
+tierTrendChart(yearStats)
+```
+
+<div style="display:flex;gap:20px;flex-wrap:wrap;margin:0.75rem 0 1rem;justify-content:center;">
+  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#f9d53f;display:inline-block"></span>1 album</span>
+  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#e67bf7;display:inline-block"></span>2 albums</span>
+  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#9c57f3;display:inline-block"></span>3&ndash;9 albums</span>
+  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#5127e9;display:inline-block"></span>10+ albums</span>
+</div>
+
+</div>
+
+The pattern isn't a steady climb toward higher tiers as the wheel turns —
+it's a **U-shape**. The "1 album" share is highest right at both edges of
+the 25-year window (2001&ndash;2004 and 2024&ndash;2025, each above 30%) and
+lowest in the middle stretch (down near 12&ndash;14% around 2008, 2017, and
+2019&ndash;2020).
+
+That matches a real, well-known effect from cohort analysis, just cutting
+both ways rather than one: near **2001**, any artist whose prolific run was
+already mostly behind them before the list existed gets none of that
+earlier history counted — a **left-truncation** effect. Near **2025**, a
+brand-new artist simply hasn't had the calendar time yet to earn a second
+appearance — the mirror-image **right-censoring** effect. An artist who
+happened to arrive mid-window, by contrast, had room on both sides to build
+a track record. The instinct that the window's edges distort the count was
+right — it just distorts *both* ends, not only the start.
