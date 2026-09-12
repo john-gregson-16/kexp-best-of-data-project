@@ -407,7 +407,60 @@ per-segment hover.
 **Open for later:** more below-the-fold findings, restricted to what's
 derivable from the raw list structure alone (year, rank, list size, artist,
 album) before any outside metadata (genre, geography, play counts) enters
-the picture -- candidates discussed: rank-vs-eventual-tier correlation
-(do chart-toppers skew veteran?), year-over-year list turnover/freshness
+the picture -- candidates discussed: year-over-year list turnover/freshness
 rate (a natural companion to the U-shape chart), and multi-year gap/comeback
-patterns for repeat artists. None built yet.
+patterns for repeat artists (real stat found while scoping this: median gap
+between an artist's appearances is 3 years, only 14.3% of comebacks are
+back-to-back, longest single gap is The Hives at 19 years (2004->2023), and
+Mogwai spans the entire dataset, 2001->2025, in just 6 appearances -- good
+callout material, not yet built into anything).
+
+### Third chart, corrected mid-design: "Is the top of the list reserved for familiar names?" (2026-09-12)
+
+**The original plan was to cross-tabulate rank against the same 25-year
+tier used everywhere else on the page** (rank 1-5 was 83.2% tier-3+,
+rank 51+ was only 41.7% -- looked like a clean, strong finding). **User
+caught a real methodological problem before it shipped:** the 25-year tier
+is a retrospective total, attached identically to every one of an artist's
+rows regardless of which row's year you're looking at -- so an artist's
+*first-ever* appearance already gets full credit for albums they wouldn't
+release for another decade. Asking "does rank correlate with being an
+already-proven artist" with that metric silently answers a different
+question: "does rank correlate with an artist who eventually turned out to
+be prolific," which is not the same claim and overstates how much a reader
+in, say, 2002 could have actually known.
+
+**Fix: a second, purpose-built metric** -- for each row, count how many
+times that artist had appeared on an Annual list *up to and including that
+row's year* (built from `list_year` + `artist_id` alone, sorting each
+artist's own appearance years and taking the index). Deliberately does
+**not** touch album-release chronology/discography order -- the user is
+already planning a separate purpose-built analysis for "is this typically
+an artist's 1st/2nd/3rd released album," and conflating the two would jam
+two different questions into one chart. This one stays scoped to *this
+list's own history*, nothing about an artist's broader discography.
+
+**Real numbers changed once corrected, but the underlying gradient
+survived:**
+
+| Rank band | 1st appearance | 2nd | 3rd-9th | 10th+ |
+|---|---|---|---|---|
+| 1-5 | 25.6% | 32.8% | 41.6% | 0.0% |
+| 6-10 | 32.0% | 29.6% | 38.4% | 0.0% |
+| 11-20 | 40.0% | 22.8% | 37.2% | 0.0% |
+| 21-50 | 46.1% | 20.9% | 32.8% | 0.1% |
+| 51+ | 54.1% | 20.9% | 24.8% | 0.2% |
+
+First-timer share still climbs steadily top-to-bottom of the list (25.6% ->
+54.1%), so "the top skews toward familiar names" still holds -- just far
+less absolutely than the original 0%-tier-1-at-rank-1 framing implied.
+Sharpest single fact: of the 25 albums that have ever hit #1, **7 (28%)**
+were that artist's first-ever Annual-list appearance -- debuting at #1
+happens; those artists just then go on to reappear, which is what pulled
+their retrospective tier up in the original (wrong-question) version.
+
+**Lesson for every future chart on this page:** any time a chart wants to
+ask "what did we know at the time," check whether the metric being reused
+is itself retrospective/whole-window before reusing it -- the tier column
+answers "how did this turn out," not "what was known then," and those are
+easy to conflate silently.

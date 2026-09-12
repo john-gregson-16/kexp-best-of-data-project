@@ -442,3 +442,170 @@ appearance — the mirror-image **right-censoring** effect. An artist who
 happened to arrive mid-window, by contrast, had room on both sides to build
 a track record. The instinct that the window's edges distort the count was
 right — it just distorts *both* ends, not only the start.
+
+### Is the top of the list reserved for familiar names?
+
+The tier used above is a 25-year *total* — it already knows about albums an
+artist hadn't released yet at the time of a given appearance. That's fine
+for "how prolific did this artist turn out to be," but it's the wrong
+measure for "was this artist already known *at the time* they got this
+rank" — an artist's first-ever appearance would get credit for albums still
+years in their future. So this chart uses a different count: how many times
+this artist had appeared on an Annual list **up to and including this one**
+— nothing about album chronology, just this list's own history, kept
+separate from the artist-discography-order analysis planned for later.
+
+```js
+const asOfBucketed = (() => {
+  const byArtist = new Map();
+  for (const d of rows) {
+    if (!byArtist.has(d.artist_id)) byArtist.set(d.artist_id, []);
+    byArtist.get(d.artist_id).push(d);
+  }
+  const bucketFor = (n) => (n === 1 ? 1 : n === 2 ? 2 : n <= 9 ? 3 : 4);
+  const out = new Map();
+  for (const [, entries] of byArtist) {
+    const years = d3.sort(new Set(entries.map((d) => d.list_year)));
+    const numForYear = new Map(years.map((yr, i) => [yr, i + 1]));
+    for (const d of entries) out.set(d, bucketFor(numForYear.get(d.list_year)));
+  }
+  return out;
+})();
+```
+
+```js
+const rankBands = [
+  {label: "1–5", lo: 1, hi: 5},
+  {label: "6–10", lo: 6, hi: 10},
+  {label: "11–20", lo: 11, hi: 20},
+  {label: "21–50", lo: 21, hi: 50},
+  {label: "51+", lo: 51, hi: 120},
+];
+const rankBandStats = rankBands.map((band) => {
+  const entries = rows.filter((d) => d.rank >= band.lo && d.rank <= band.hi);
+  const counts = {1: 0, 2: 0, 3: 0, 4: 0};
+  for (const d of entries) counts[asOfBucketed.get(d)]++;
+  return {label: band.label, counts, total: entries.length};
+});
+```
+
+```js
+function rankTrendChart(bandStats) {
+  const tiers = [1, 2, 3, 4];
+  const bucketLabel = {1: "1st appearance", 2: "2nd appearance", 3: "3rd–9th appearance", 4: "10th+ appearance"};
+  const width = 640, height = 340;
+  const marginL = 40, marginR = 12, marginT = 16, marginB = 34;
+  const plotW = width - marginL - marginR;
+  const plotH = height - marginT - marginB;
+  const gap = 2;
+
+  const x = d3.scaleBand().domain(bandStats.map((d) => d.label)).range([0, plotW]).padding(0.3);
+  const y = d3.scaleLinear().domain([0, 100]).range([plotH, 0]);
+
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("width", width)
+    .attr("height", height)
+    .attr("style", "background:#1a1a19;border-radius:12px;max-width:100%;height:auto;font-family:var(--sans-serif);");
+
+  const g = svg.append("g").attr("transform", `translate(${marginL},${marginT})`);
+
+  const yTicks = [0, 25, 50, 75, 100];
+  g.append("g").selectAll("line").data(yTicks).join("line")
+    .attr("x1", 0).attr("x2", plotW)
+    .attr("y1", (d) => y(d)).attr("y2", (d) => y(d))
+    .attr("stroke", "#33322f").attr("stroke-width", 1);
+  g.append("g").selectAll("text").data(yTicks).join("text")
+    .attr("x", -8).attr("y", (d) => y(d))
+    .attr("text-anchor", "end").attr("dominant-baseline", "middle")
+    .attr("fill", "#898781").attr("font-size", 10)
+    .text((d) => d + "%");
+
+  g.append("g").selectAll("text").data(bandStats).join("text")
+    .attr("x", (d) => x(d.label) + x.bandwidth() / 2)
+    .attr("y", plotH + 20)
+    .attr("text-anchor", "middle")
+    .attr("fill", "#898781")
+    .attr("font-size", 11)
+    .text((d) => d.label);
+
+  const tooltip = d3.select(document.createElement("div"))
+    .attr("style", "position:fixed;pointer-events:none;background:#1a1a19;color:#f0efec;border:1px solid #383835;border-radius:8px;padding:8px 10px;font-size:12px;font-family:var(--sans-serif);opacity:0;transition:opacity 0.1s;z-index:10;min-width:170px;");
+  document.body.appendChild(tooltip.node());
+
+  const bars = g.selectAll("g.bar").data(bandStats).join("g")
+    .attr("transform", (d) => `translate(${x(d.label)},0)`);
+
+  bars.each(function (d) {
+    const gEl = d3.select(this);
+    let cum = 0;
+    tiers.forEach((t, i) => {
+      const cnt = d.counts[t] || 0;
+      const pct = (100 * cnt) / d.total;
+      const y0 = cum, y1 = cum + pct;
+      cum = y1;
+      const yTop = y(y1), yBot = y(y0);
+      const isTop = i === tiers.length - 1;
+      const segH = Math.max(0, yBot - yTop - (isTop ? 0 : gap));
+      const w = x.bandwidth();
+      const path = isTop
+        ? (() => {
+            const r = 3;
+            const hh = Math.max(0, segH);
+            if (hh <= r) return `M${0},${yTop} h${w} v${hh} h${-w} Z`;
+            return `M${0},${yTop + r} A${r},${r} 0 0 1 ${r},${yTop} H${w - r} A${r},${r} 0 0 1 ${w},${yTop + r} V${yTop + hh} H${0} Z`;
+          })()
+        : `M0,${yTop} h${w} v${segH} h${-w} Z`;
+      gEl.append("path").attr("d", path).attr("fill", tierColor[t]);
+    });
+  });
+
+  bars.append("rect")
+    .attr("x", 0).attr("y", 0)
+    .attr("width", x.bandwidth()).attr("height", plotH)
+    .attr("fill", "transparent")
+    .on("pointerenter pointermove", function (event, d) {
+      d3.select(this.parentNode).selectAll("path").style("opacity", 0.8);
+      const lines = tiers.map((t) => {
+        const c = d.counts[t] || 0;
+        const pct = ((100 * c) / d.total).toFixed(1);
+        return `<div style="display:flex;justify-content:space-between;gap:12px"><span>${bucketLabel[t]}</span><b>${pct}%</b></div>`;
+      });
+      tooltip
+        .style("opacity", 1)
+        .html(`<b>Rank ${d.label}</b> · ${d.total} entries<br>${lines.join("")}`)
+        .style("left", event.clientX + 14 + "px")
+        .style("top", event.clientY + 14 + "px");
+    })
+    .on("pointerleave", function () {
+      d3.select(this.parentNode).selectAll("path").style("opacity", 1);
+      tooltip.style("opacity", 0);
+    });
+
+  return svg.node();
+}
+```
+
+<div class="card" style="background:#1a1a19;padding:1.5rem 1.5rem 0.5rem;max-width:700px;margin:0 auto;">
+
+```js
+rankTrendChart(rankBandStats)
+```
+
+<div style="display:flex;gap:20px;flex-wrap:wrap;margin:0.75rem 0 1rem;justify-content:center;">
+  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#f9d53f;display:inline-block"></span>1st appearance</span>
+  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#e67bf7;display:inline-block"></span>2nd appearance</span>
+  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#9c57f3;display:inline-block"></span>3rd&ndash;9th appearance</span>
+  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#5127e9;display:inline-block"></span>10th+ appearance</span>
+</div>
+
+</div>
+
+The gradient is real but softer than it first looked: first-timers make up
+25.6% of rank 1&ndash;5 entries, climbing steadily to 54.1% by rank 51 and
+below. The top of the list does skew toward familiar names — just not as
+absolutely as counting every artist's eventual career total implied. One
+specific number worth sitting with: of the 25 albums that have ever hit
+**#1**, 7 of them (28%) were that artist's first-ever appearance on an
+Annual list. Debuting at the top isn't rare — those artists just tend to
+come back.
