@@ -464,3 +464,23 @@ ask "what did we know at the time," check whether the metric being reused
 is itself retrospective/whole-window before reusing it -- the tier column
 answers "how did this turn out," not "what was known then," and those are
 easy to conflate silently.
+
+**Follow-up fix (2026-09-12): added an in-chart axis label.** User
+correctly flagged that "1-5, 6-10, 11-20..." reads as meaningless without
+context -- unlike the year-composition chart (where "2001, 2002..." is
+self-evidently a timeline), a rank band has no obvious unit on its own.
+Added a small recessive-gray axis title, "Rank on that year's list
+(1 = best)", directly under the band tick labels rather than relying on
+the surrounding prose to carry that meaning.
+
+**Dev-environment note, not a real code bug:** while making that axis-label
+change, every chart on the page (including the wheel, unrelated to the
+edit) briefly stopped rendering across several full server restarts and
+fresh tabs, with zero console or server errors -- diagnosed as this dev
+sandbox's environment flakiness, not a Framework parsing bug or anything
+wrong in the file. Confirmed by reverting to byte-identical known-working
+code and seeing it still fail, then seeing everything recover after a full
+`preview_stop`/`preview_start` cycle with a brand-new tab. No lasting
+gotcha to document here -- if a future session sees every chart on a page
+go blank with no error, a full server + tab restart before debugging the
+code is the first thing to try.

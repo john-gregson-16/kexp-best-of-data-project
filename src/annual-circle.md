@@ -293,11 +293,13 @@ tierCohortChart(totalArtists, tierArtistCounts)
 
 </div>
 
-Of the ${totalArtists.toLocaleString()} distinct artists who have ever made
-an Annual list, ${((100 * tierArtistCounts.get(1)) / totalArtists).toFixed(1)}%
-have exactly *one* album on it, ever. "One and done" is the majority case,
-not the exception — and only ${tierArtistCounts.get(4)} artists in 25 years
-have cracked double digits.
+```js
+(() => {
+  const p = document.createElement("p");
+  p.innerHTML = `Of the ${totalArtists.toLocaleString()} distinct artists who have ever made an Annual list, ${((100 * tierArtistCounts.get(1)) / totalArtists).toFixed(1)}% have exactly <em>one</em> album on it, ever. &ldquo;One and done&rdquo; is the majority case, not the exception &mdash; and only ${tierArtistCounts.get(4)} artists in 25 years have cracked double digits.`;
+  return p;
+})()
+```
 
 ### Does it matter *when* an artist first shows up?
 
@@ -494,7 +496,7 @@ function rankTrendChart(bandStats) {
   const tiers = [1, 2, 3, 4];
   const bucketLabel = {1: "1st appearance", 2: "2nd appearance", 3: "3rd–9th appearance", 4: "10th+ appearance"};
   const width = 640, height = 340;
-  const marginL = 40, marginR = 12, marginT = 16, marginB = 34;
+  const marginL = 40, marginR = 12, marginT = 16, marginB = 54;
   const plotW = width - marginL - marginR;
   const plotH = height - marginT - marginB;
   const gap = 2;
@@ -528,6 +530,14 @@ function rankTrendChart(bandStats) {
     .attr("fill", "#898781")
     .attr("font-size", 11)
     .text((d) => d.label);
+
+  g.append("text")
+    .attr("x", plotW / 2)
+    .attr("y", plotH + 42)
+    .attr("text-anchor", "middle")
+    .attr("fill", "#6b6a64")
+    .attr("font-size", 10)
+    .text("Rank on that year's list (1 = best)");
 
   const tooltip = d3.select(document.createElement("div"))
     .attr("style", "position:fixed;pointer-events:none;background:#1a1a19;color:#f0efec;border:1px solid #383835;border-radius:8px;padding:8px 10px;font-size:12px;font-family:var(--sans-serif);opacity:0;transition:opacity 0.1s;z-index:10;min-width:170px;");
