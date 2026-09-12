@@ -619,3 +619,129 @@ specific number worth sitting with: of the 25 albums that have ever hit
 **#1**, 7 of them (28%) were that artist's first-ever appearance on an
 Annual list. Debuting at the top isn't rare — those artists just tend to
 come back.
+
+### How much of each year's list is brand new?
+
+The U-shape chart above already hints at this from a different angle. This
+one asks it directly: of everyone on a given year's list, what share had
+never appeared on an Annual list before?
+
+```js
+const firstYearByArtist = new Map();
+for (const d of rows) {
+  const cur = firstYearByArtist.get(d.artist_id);
+  if (cur === undefined || d.list_year < cur) firstYearByArtist.set(d.artist_id, d.list_year);
+}
+const turnoverStats = years.map((yr) => {
+  const entries = rows.filter((d) => d.list_year === yr);
+  const debuts = entries.filter((d) => firstYearByArtist.get(d.artist_id) === yr).length;
+  return {year: yr, total: entries.length, debuts, pct: (100 * debuts) / entries.length};
+});
+```
+
+```js
+function turnoverLineChart(stats) {
+  const width = 880, height = 320;
+  const marginL = 40, marginR = 16, marginT = 16, marginB = 46;
+  const plotW = width - marginL - marginR;
+  const plotH = height - marginT - marginB;
+  const color = "#f9d53f";
+
+  const x = d3.scalePoint(stats.map((d) => d.year), [0, plotW]);
+  const y = d3.scaleLinear([0, 100], [plotH, 0]);
+
+  const svg = d3.create("svg")
+    .attr("viewBox", [0, 0, width, height])
+    .attr("width", width)
+    .attr("height", height)
+    .attr("style", "background:#1a1a19;border-radius:12px;max-width:100%;height:auto;font-family:var(--sans-serif);");
+
+  const g = svg.append("g").attr("transform", `translate(${marginL},${marginT})`);
+
+  const yTicks = [0, 25, 50, 75, 100];
+  g.append("g").selectAll("line").data(yTicks).join("line")
+    .attr("x1", 0).attr("x2", plotW)
+    .attr("y1", (d) => y(d)).attr("y2", (d) => y(d))
+    .attr("stroke", "#33322f").attr("stroke-width", 1);
+  g.append("g").selectAll("text").data(yTicks).join("text")
+    .attr("x", -8).attr("y", (d) => y(d))
+    .attr("text-anchor", "end").attr("dominant-baseline", "middle")
+    .attr("fill", "#898781").attr("font-size", 10)
+    .text((d) => d + "%");
+
+  g.append("g").selectAll("text").data(stats).join("text")
+    .attr("x", (d) => x(d.year))
+    .attr("y", plotH + 10)
+    .attr("text-anchor", "end")
+    .attr("fill", "#898781")
+    .attr("font-size", 9)
+    .attr("transform", (d) => `rotate(-55,${x(d.year)},${plotH + 10})`)
+    .text((d) => d.year);
+
+  const line = d3.line().x((d) => x(d.year)).y((d) => y(d.pct));
+  g.append("path")
+    .attr("d", line(stats))
+    .attr("fill", "none")
+    .attr("stroke", color)
+    .attr("stroke-width", 2)
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round");
+
+  const points = g.append("g").selectAll("g").data(stats).join("g")
+    .attr("transform", (d) => `translate(${x(d.year)},${y(d.pct)})`);
+  points.append("circle").attr("r", 6).attr("fill", "#1a1a19");
+  points.append("circle").attr("r", 4).attr("fill", color);
+
+  const crosshair = g.append("line")
+    .attr("y1", 0).attr("y2", plotH)
+    .attr("stroke", "#454440").attr("stroke-width", 1)
+    .style("opacity", 0);
+
+  const tooltip = d3.select(document.createElement("div"))
+    .attr("style", "position:fixed;pointer-events:none;background:#1a1a19;color:#f0efec;border:1px solid #383835;border-radius:8px;padding:8px 10px;font-size:12px;font-family:var(--sans-serif);opacity:0;transition:opacity 0.1s;z-index:10;min-width:150px;");
+  document.body.appendChild(tooltip.node());
+
+  g.append("rect")
+    .attr("x", 0).attr("y", 0)
+    .attr("width", plotW).attr("height", plotH)
+    .attr("fill", "transparent")
+    .on("pointermove", function (event) {
+      const [mx] = d3.pointer(event, this);
+      const i = Math.round((mx / plotW) * (stats.length - 1));
+      const d = stats[Math.max(0, Math.min(stats.length - 1, i))];
+      crosshair.attr("x1", x(d.year)).attr("x2", x(d.year)).style("opacity", 1);
+      points.select("circle:last-child").attr("r", (p) => (p === d ? 6 : 4));
+      tooltip
+        .style("opacity", 1)
+        .html(`<b>${d.year}</b><br>${d.debuts} of ${d.total} entries were a first appearance<br><b>${d.pct.toFixed(1)}%</b> turnover`)
+        .style("left", event.clientX + 14 + "px")
+        .style("top", event.clientY + 14 + "px");
+    })
+    .on("pointerleave", function () {
+      crosshair.style("opacity", 0);
+      points.select("circle:last-child").attr("r", 4);
+      tooltip.style("opacity", 0);
+    });
+
+  return svg.node();
+}
+```
+
+<div class="card" style="background:#1a1a19;padding:1.5rem;max-width:920px;margin:0 auto;">
+
+```js
+turnoverLineChart(turnoverStats)
+```
+
+</div>
+
+2001 opens at a trivial 100% — there's no prior list anyone *could* have
+already been on, so that point isn't a real finding, just the starting
+condition. From 2002 on it's a real, steady decline: 89% turnover in 2002
+falling to a floor around 30&ndash;34% by the mid-2010s, where it's stayed
+ever since (with some noise — 2021 and 2024 both tick back up over 40%).
+Read together with the U-shape chart above, the story is consistent: the
+list *matures* over its first decade as a growing pool of past artists
+becomes available to return, then settles into a steady state where
+roughly a third of any given year's list is a name that's never appeared
+before — not shrinking further, just holding.

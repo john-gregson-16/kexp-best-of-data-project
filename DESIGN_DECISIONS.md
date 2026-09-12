@@ -484,3 +484,53 @@ code and seeing it still fail, then seeing everything recover after a full
 gotcha to document here -- if a future session sees every chart on a page
 go blank with no error, a full server + tab restart before debugging the
 code is the first thing to try.
+
+## Fourth key finding: year-over-year turnover rate (2026-09-12)
+
+**Form choice: line, not bar.** Per the `dataviz` skill's form table,
+"trend over time" for a *single* series is a line (bars/stacks are for
+comparing categories or multiple series at once, which is what the other
+three key-finding charts are doing). Single series also means no legend box
+is needed -- the heading already says what's plotted, matching the skill's
+"a single series needs no legend box" rule.
+
+**Color: reused tier-1 yellow (`#f9d53f`), not a new hue.** The metric is
+literally "share of the list that's a first-ever appearance," which is the
+same concept as tier 1 / "1st appearance" elsewhere on the page -- reusing
+that exact color keeps the association intentional rather than introducing
+an unrelated fifth hue to the page's palette.
+
+**Interaction:** a single shared vertical crosshair + one tooltip that
+follows pointer X, snapping to the nearest year (interaction.md's "the
+crosshair finds the X" pattern for line/bar charts) -- not per-point hover
+targets, since with 25 evenly-spaced points a full-width tracking rect is
+both simpler and more forgiving to aim at than 25 small individual hit
+areas. Verified live: hovering shows "2013 - 40 of 91 entries were a first
+appearance - 44.0% turnover," matching the computed data exactly.
+
+**2001's 100% is real data, deliberately not specially encoded.** It's
+trivially 100% by definition (no prior list exists for anyone to have
+already appeared on), not a finding -- but rather than hide or visually
+distinguish that point on the chart itself (which risks looking like the
+chart is editorializing), it's plotted like every other point and the
+triviality is explained once, plainly, in the prose immediately below.
+
+**Real numbers (recomputed with the quote-aware parser to rule out the
+comma-parsing bug found earlier -- confirmed identical to the original
+naive-parse pass, so that bug never actually touched this metric):** 100%
+(2001, trivial) -> 89% (2002) -> a real, steady decline through the 2000s,
+settling to a floor around 30-34% from the mid-2010s onward, still holding
+through 2025 (with noise -- 2021 and 2024 both spike back over 40%). Read
+together with the U-shape and rank-familiarity charts, all three point the
+same direction: the list "matures" over roughly its first decade, then
+settles into a steady state rather than continuing to trend in any
+direction.
+
+**Recurring dev-environment note:** hit the same "every chart including
+unrelated ones goes blank, zero errors" symptom again while building this
+chart -- same fix (`preview_stop`, close tab, `preview_start`, fresh
+navigate, generous wait before checking). Given this is now the second
+occurrence on this same page, it may simply be a real cost of this
+project's size/session length rather than something tied to any specific
+edit -- treat it as an environment quirk to route around, not a signal to
+keep debugging the file's code.
