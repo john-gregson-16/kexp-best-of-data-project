@@ -660,3 +660,56 @@ again, rather than assuming these two buttons close it out.
 dots at full brightness with every other dot visibly dimmed; "Clear all"
 unchecks all 25 year boxes and dims every dot on the wheel; "Select all"
 restores all 25 and full brightness.
+
+### Correction: artist search should intersect with the year filter, not override it (2026-09-12)
+
+**User's real-use catch:** with only 2002 checked, searching "Wilco" showed
+*all* of Wilco's dots across every year, not just the 2002 one -- the
+initial "grey out everything else" fix (above) still had artist-selected
+dots forced to full opacity/size/ring unconditionally, which reads as
+"search overrides the year filter" rather than "search narrows within it."
+The user's expected model was **AND, not override**: checking only 2002
+and searching Wilco should show exactly her one 2002 dot highlighted,
+and checking 2011 too should reveal a second highlighted dot -- the two
+filters compose.
+
+**Fix:** every part of the highlight treatment (opacity, enlarged radius,
+stroke ring) now requires `d.artist_id === selectedArtist &&
+selected.has(d.list_year)` together, not artist-match alone. A dot for the
+right artist but a currently-unchecked year is just another dimmed dot,
+identical to the treatment any other out-of-scope dot gets.
+
+**Verified live:** checked 2002 only, searched Wilco -- exactly one
+enlarged/ringed dot near the 2002 spoke, everything else (including
+Wilco's other 10 appearances) dimmed like the rest of the wheel.
+
+### Rank-order reading-order key (2026-09-12)
+
+**Problem raised directly by the user:** the wedge/grid layout's snaking
+column order (rank increases outward, but alternates left-to-right then
+right-to-left each band) isn't self-evident just from looking at the
+wheel -- unlike a single radial line, there's no obvious "this is the
+order" cue.
+
+**User's proposed fix, verified against the actual geometry before
+building:** two stacked rows of small numbered circles -- bottom row
+1-5 left to right, row above it 10-6 left to right -- light grey,
+tucked in a corner, wordless (matching the hub arrow's own style).
+Checked this against the real `xy()` band/column math before assuming it
+was right: band 0 (ranks 1-5) is left-to-right by construction, and band 1
+(ranks 6-10) reverses (`col = columns - 1 - rawCol`), which resolves to
+physical left-to-right reading order 10,9,8,7,6 -- exactly matching the
+user's proposal. Nothing needed to change about the proposed numbers.
+
+**Placement: bottom-right corner of the SVG canvas, not tied to the
+data gap.** The wheel's own 30-degree gap sits lower-left/west (a
+consequence of the -90-degree start angle), but the key doesn't need to
+respect that -- a circle inscribed in a square canvas leaves all four
+corners empty regardless of where the data gap falls, so bottom-right
+(a corner, not an edge) stays clear of spokes and dots at any zoom level.
+
+**Verified via DOM inspection** (not just visual glance, since the glyphs
+render at only 8px): the ten `<text>` nodes read exactly `1,2,3,4,5` at
+the lower y-coordinate and `10,9,8,7,6` at the row above it, left to
+right by x-coordinate -- confirms both the content and the row order are
+correct, independent of how legible they are at a quick glance.

@@ -301,12 +301,14 @@ function annualCircle(data, selectedYears, selectedArtist) {
     .join("circle")
     .attr("cx", (d) => xy(d.list_year, d.rank)[0])
     .attr("cy", (d) => xy(d.list_year, d.rank)[1])
-    .attr("r", (d) => tierSize[d.tier] * (d.artist_id === selectedArtist ? 1.8 : 1))
+    .attr("r", (d) => tierSize[d.tier] * (d.artist_id === selectedArtist && selected.has(d.list_year) ? 1.8 : 1))
     .attr("fill", (d) => tierColor[d.tier])
-    .attr("stroke", (d) => (d.artist_id === selectedArtist ? "#f0efec" : "none"))
+    .attr("stroke", (d) => (d.artist_id === selectedArtist && selected.has(d.list_year) ? "#f0efec" : "none"))
     .attr("stroke-width", 1.5)
     .attr("opacity", (d) => {
-      if (selectedArtist) return d.artist_id === selectedArtist ? 1 : dimOpacity;
+      if (selectedArtist) {
+        return d.artist_id === selectedArtist && selected.has(d.list_year) ? 1 : dimOpacity;
+      }
       return selected.has(d.list_year) ? 1 : dimOpacity;
     })
     .on("pointerenter", (event, d) => {
@@ -320,6 +322,38 @@ function annualCircle(data, selectedYears, selectedArtist) {
       tooltip.style("left", event.clientX + 14 + "px").style("top", event.clientY + 14 + "px");
     })
     .on("pointerleave", () => tooltip.style("opacity", 0));
+
+  // Small reading-order key: two stacked rows of dummy dots showing how
+  // rank actually snakes outward within a spoke (1-5 left-to-right, then
+  // 6-10 right-to-left) -- the wedge/grid layout's least self-evident
+  // detail. Wordless, matching the hub arrow's own style.
+  {
+    const keyR = 6;
+    const keyGap = 18;
+    const keyMarginRight = 34;
+    const keyMarginBottom = 34;
+    const rightX = size - keyMarginRight;
+    const bottomY = size - keyMarginBottom;
+    const rowInner = [1, 2, 3, 4, 5];
+    const rowOuter = [10, 9, 8, 7, 6];
+    const keyG = svg.append("g").attr("opacity", 0.75);
+    [
+      {row: rowInner, y: bottomY},
+      {row: rowOuter, y: bottomY - keyGap},
+    ].forEach(({row, y}) => {
+      row.forEach((n, i) => {
+        const cx2 = rightX - (row.length - 1 - i) * keyGap;
+        keyG.append("circle")
+          .attr("cx", cx2).attr("cy", y).attr("r", keyR)
+          .attr("fill", "none").attr("stroke", "#6b6a64").attr("stroke-width", 1.2);
+        keyG.append("text")
+          .attr("x", cx2).attr("y", y + 1)
+          .attr("text-anchor", "middle").attr("dominant-baseline", "central")
+          .attr("fill", "#6b6a64").attr("font-size", 8)
+          .text(n);
+      });
+    });
+  }
 
   return svg.node();
 }
