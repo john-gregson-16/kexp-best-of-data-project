@@ -628,3 +628,35 @@ headed "Wilco -- 11 appearances (10+ albums across all 25 years)" with all
 11 rows correct (including Yankee Hotel Foxtrot at #1 in 2002), and
 enlarges/rings exactly the matching dots on the wheel. Clear correctly
 resets both the input and the wheel to its unhighlighted state.
+
+### Follow-up (2026-09-12): grey out non-matching dots on artist select, plus year select-all/clear-all
+
+**User's first-use feedback:** selecting an artist enlarged/ringed their
+dots but left every other dot at normal opacity (governed only by the year
+checkboxes, which default to all-checked) -- the intended "just show me
+Wilco" effect didn't fully land, since 2,311 other dots stayed just as
+bright. Fixed by making dot opacity artist-aware: **when an artist is
+selected, opacity is `1` for their dots and `dimOpacity` for literally
+everything else, full stop** -- the year-checkbox opacity logic is bypassed
+entirely while a search is active, rather than trying to combine both
+rules. Year labels were deliberately left untouched (out of scope of what
+was asked, and they're already a muted grey that doesn't compete visually
+with bright dimmed-vs-highlighted dots).
+
+**Also added, per explicit request:** "Select all" / "Clear all" buttons
+above the year checkboxes -- both just toggle every checkbox's `.checked`
+and dispatch one synthetic `input` event on the container, same mechanism
+the artist-search widget already uses to notify `view()` of a programmatic
+change.
+
+**User also flagged, not yet actioned:** general uncertainty about whether
+checkboxes are the right control for 25 years long-term (echoes the
+"may change my mind" note from the year-filter's original build) -- select
+all/clear all is a stopgap, not a resolution. Worth revisiting the
+checkbox-vs-slider-vs-something-else question together if it comes up
+again, rather than assuming these two buttons close it out.
+
+**Verified live:** searching "Wilco" now shows exactly the enlarged/ringed
+dots at full brightness with every other dot visibly dimmed; "Clear all"
+unchecks all 25 year boxes and dims every dot on the wheel; "Select all"
+restores all 25 and full brightness.

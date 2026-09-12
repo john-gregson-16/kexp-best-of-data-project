@@ -25,8 +25,22 @@ const years = d3.sort(new Set(rows.map((d) => d.list_year)));
 
 ```js
 function yearCheckboxes(allYears) {
+  const container = document.createElement("div");
+
+  const controls = document.createElement("div");
+  controls.style.cssText = "display:flex;gap:8px;margin-bottom:0.4rem;";
+  const selectAllBtn = document.createElement("button");
+  selectAllBtn.type = "button";
+  selectAllBtn.textContent = "Select all";
+  selectAllBtn.style.cssText = "font-size:12px;padding:4px 10px;border-radius:6px;border:1px solid var(--theme-foreground-faint);background:transparent;color:var(--theme-foreground);cursor:pointer;";
+  const clearAllBtn = document.createElement("button");
+  clearAllBtn.type = "button";
+  clearAllBtn.textContent = "Clear all";
+  clearAllBtn.style.cssText = selectAllBtn.style.cssText;
+  controls.append(selectAllBtn, clearAllBtn);
+
   const div = document.createElement("div");
-  div.style.cssText = "display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin:0.75rem 0;";
+  div.style.cssText = "display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin:0 0 0.75rem;";
   const boxes = allYears.map((yr) => {
     const label = document.createElement("label");
     label.style.cssText = "display:flex;align-items:center;gap:4px;cursor:pointer;";
@@ -38,12 +52,23 @@ function yearCheckboxes(allYears) {
     div.append(label);
     return input;
   });
-  Object.defineProperty(div, "value", {
+
+  container.append(controls, div);
+
+  Object.defineProperty(container, "value", {
     get() {
       return boxes.filter((b) => b.checked).map((b) => +b.value);
     },
   });
-  return div;
+
+  function setAll(checked) {
+    for (const b of boxes) b.checked = checked;
+    container.dispatchEvent(new Event("input"));
+  }
+  selectAllBtn.addEventListener("click", () => setAll(true));
+  clearAllBtn.addEventListener("click", () => setAll(false));
+
+  return container;
 }
 
 const selectedYears = view(yearCheckboxes(years));
@@ -280,7 +305,10 @@ function annualCircle(data, selectedYears, selectedArtist) {
     .attr("fill", (d) => tierColor[d.tier])
     .attr("stroke", (d) => (d.artist_id === selectedArtist ? "#f0efec" : "none"))
     .attr("stroke-width", 1.5)
-    .attr("opacity", (d) => (d.artist_id === selectedArtist ? 1 : selected.has(d.list_year) ? 1 : dimOpacity))
+    .attr("opacity", (d) => {
+      if (selectedArtist) return d.artist_id === selectedArtist ? 1 : dimOpacity;
+      return selected.has(d.list_year) ? 1 : dimOpacity;
+    })
     .on("pointerenter", (event, d) => {
       tooltip
         .style("opacity", 1)
