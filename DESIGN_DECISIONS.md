@@ -182,3 +182,174 @@ printing `rows.length` worked; the identical inline `${rows.length}` stayed
 blank forever). Any FileAttachment-derived value that feeds a chart should
 be consumed inside a fenced cell, not built directly in an inline
 expression.
+
+### Second pass (2026-09-11): wedge/grid layout, fixing dot crowding
+
+**Problem, diagnosed with real numbers, not just "it looks cramped":** the
+first build placed every rank on a single radial line per year. At that
+chart's size, each rank step was only ~2.55px of radius, but the dots
+themselves are 4.4–9.6px in diameter — meaning even the smallest tier
+overlapped its neighbors, and the 34 tier-4 dots (9.6px) overlapped by
+roughly 3.8x. No amount of re-coloring fixes a spacing budget that's already
+short by that much.
+
+**Reference re-examined:** the user's original Tableau reference
+(`public.tableau.com/.../CalendarCircleChart`) and a second one supplied
+this round (`.../WOWSubmissionTracker`) both turned out to use two spatial
+dimensions inside each category's wedge (radius for week-of-month, angle for
+day-of-week) rather than one — that's the actual mechanism that gives their
+dots room, not a bigger canvas. Confirmed by loading the WOW tracker directly
+and inspecting its layout rather than assuming from the thumbnail.
+
+**Fix: fan each year's dots into a small snaking grid inside its own wedge,**
+instead of stacking them on one line — same mechanism as the reference
+charts. Rank still increases outward on average (hover still reports the
+exact rank), but consecutive ranks alternate across `columns = 5` lanes in a
+boustrophedon (snake) pattern, so neighbors are separated in two directions
+instead of one.
+
+**Geometry is fixed pixels, not proportional to container width:**
+`colPitchPx = 8` (lateral spacing between lanes) and `bandHeight = 10px`
+(radial spacing between rows) are constant regardless of chart size, and are
+applied as a Cartesian offset perpendicular to each spoke's direction vector
+— not a polar-angle offset — specifically so the pixel spacing stays
+constant near the hub, where a fixed *angle* would otherwise correspond to a
+vanishingly small (or, near center, a wildly oversized) physical gap.
+
+**`innerR = 180` is deliberately large,** not cosmetic: it's the minimum hub
+radius at which band-0's wedge width (5 lanes x 8px) stays within one year's
+angular slot (330° / 25 years) without crossing into a neighboring year's
+wedge. A smaller hub radius was tried first and visibly bled into adjacent
+spokes near the center.
+
+**Consequence:** the chart's intrinsic size grew from 760px to ~960px
+(`(innerR + bands*bandHeight + label padding) * 2`, driven by 2012's 120
+entries needing 24 bands at 5 columns). Rather than rescale this geometry to
+fit an arbitrary container width, the chart now renders at one fixed
+canonical size and lets CSS (`max-width:100%; height:auto`) shrink the whole
+image proportionally on narrow screens — preserving relative dot spacing at
+every viewport size, rather than the first version's approach of
+recalculating spacing per-container-width (which was part of why the spacing
+was too tight to begin with: it targeted a fairly narrow default column
+width). This also let the `resize()` helper be dropped entirely for this
+chart — the layout no longer depends on measured container width, so
+there's no 0-width-skip risk to guard against.
+
+**Verified after the rework:** exact same tier-color counts as before
+(583 / 439 / 1266 / 34 at `#74eeee` / `#39bcbc` / `#008c8c` / `#005e60`) —
+confirms this was purely a layout change, not a data change — plus working
+hover tooltips at the new dot positions, and no visible wedge-to-wedge
+collision at any radius from hub to outer edge.
+
+### Third pass (2026-09-11): legend on-chart, direction arrow, year filter
+
+**Legend moved inside the dark card.** It previously sat in a plain HTML
+`<div>` below the card, on the light page background, using the page's
+theme-aware muted-text color — a real mismatch, since its swatches are the
+dark-surface hex values but it wasn't rendered against the dark surface.
+Now it's nested inside the same `#1a1a19` card as the chart, with its text
+color hardcoded to `#c9c8c3` (fixed, not theme-aware, matching the rest of
+the chart's on-dark text) so it reads correctly regardless of the site's own
+light/dark theme.
+
+**Hub direction arrow, no text.** A plain curved arrow (SVG arc + a
+hand-built arrowhead triangle, not a marker or icon font) sweeps 300° inside
+the hub at `arcR = 95` — comfortably clear of `innerR = 180` where the dots
+start — showing which way the wheel reads. Deliberately no text: the user's
+ask was specifically for a wordless visual cue, not a caption.
+
+**Year filter: hand-built checkboxes, not the `Inputs` package.** The
+original plan was `Inputs.checkbox(...)` (Observable's standard form-input
+library), but this dev environment's outbound network can't reach
+`cdn.jsdelivr.net` — the exact same class of failure as the earlier `htl`
+CDN-timeout gotcha — and Framework fetches npm-hosted packages like `Inputs`
+from that CDN on first use, so the page failed outright (`fetch failed`)
+until the dependency was removed. Rebuilt with a plain `<input
+type="checkbox">` per year and Framework's own `view()` / `Generators.input`
+(core stdlib, ships with Framework itself, no external fetch) — a DOM
+element just needs a `.value` getter and to let native checkbox `input`
+events bubble up to it, which `view()` picks up the same way it would for
+an `Inputs` element. **Worth re-checking once this repo runs outside this
+session's constrained network** — `Inputs.checkbox` may well be preferable
+there for its built-in styling, but the hand-built version works everywhere
+and has no external dependency, so there's no urgency to switch.
+
+**Behavior: dim, don't remove.** Unchecking a year fades its dots and label
+to 12% opacity (`dimOpacity`) rather than deleting them from the layout —
+chosen over hiding/removing spokes specifically because removing a spoke
+would change the angular scale (`angleForYear`'s domain is the full 25-year
+set) and reflow every remaining spoke's position on every checkbox click,
+which is more disorienting than useful for a "highlight what I care about"
+interaction. Verified: unchecking 2012/2013/2014 dims exactly those three
+wedges and their labels while the rest stay at full opacity and the on-screen
+tier-color counts are unaffected (583/439/1266/34, confirming this is a
+pure display toggle, not a data filter).
+
+**Not yet decided:** whether checkboxes are the final control, or whether a
+range slider (mentioned as a possible alternative, "may change my mind")
+better fits 25 discrete years — both are easy to build with this same
+`view()`-based approach if the checkboxes prove too dense in practice.
+
+### Fourth pass (2026-09-11 → 2026-09-12): multi-hue tier ramp, locked
+
+**Problem, diagnosed with real OKLCH numbers, not just a visual impression:**
+on the original single-hue teal ramp, adjacent-tier lightness gaps were
+actually almost even (~0.15 OKLCH L each) — so tiers 2/3 reading as harder
+to tell apart than 1/2 or 3/4 wasn't a measurement problem. It's a known
+limitation of single-hue sequential ramps: the eye discriminates *extreme*
+lightness far better than *mid-tone* lightness, especially at small mark
+sizes (4.4-9.6px dots) against a dark background.
+
+**First candidate (superseded): teal -> sky blue -> vivid blue -> purple.**
+Evenly-spaced hue steps (35 deg each), monotonic lightness. Fixed the
+original 2/3 confusion, but the user's next-morning re-look flagged tiers
+1/2 (teal vs. sky blue) as the new hardest pair -- evenly spacing the hue
+steps doesn't guarantee evenly spaced *perceived* distinctiveness, since
+that depends on how much chroma each hue can actually hold at that specific
+lightness (see next finding).
+
+**Root cause of that leftover 1/2 confusion, found by mapping achievable
+chroma across the hue wheel at each tier's exact lightness:** which hues
+can be vivid depends heavily on how light or dark you're asking them to be.
+At tier 1's near-white lightness (L=0.88), yellow/green (H=90-160) hold far
+more chroma (up to ~0.27) than blue/purple (H=240-300, down around ~0.06) --
+practically desaturated pastels by comparison. At tier 4's dark lightness
+(L=0.48), it flips: magenta/violet (H=260-320) hold the most chroma
+(~0.20-0.29) while yellow/green drops to ~0.10-0.15 and reads as muddy
+olive/brown rather than a clean color. So a hue path that sweeps evenly
+through the *middle* of the wheel (blue, in the first candidate) sits in
+mediocre-chroma territory for every tier -- never hitting each tier's own
+peak vividness the way jumping straight to that tier's *best* hue would.
+
+**Locked ramp: yellow -> magenta -> violet -> blue-violet**, chosen by
+picking each tier's hue from where it's actually most vivid at that tier's
+lightness, not by evenly dividing the hue wheel:
+
+| Tier | Meaning | Hue | Hex (dark surface) | Dot diameter |
+|---|---|---|---|---|
+| 1 | 1 album | yellow (H=95) | `#f9d53f` | 4.4px |
+| 2 | 2 albums | magenta (H=322) | `#e67bf7` | 5.6px |
+| 3 | 3-9 albums | violet (H=300) | `#9c57f3` | 7.2px |
+| 4 | 10+ albums | blue-violet (H=280) | `#5127e9` | 9.6px |
+
+Hue gaps: **133 deg between tiers 1 and 2** (was 35 deg in the first
+candidate -- this is the fix for the user's specific complaint), then 22 deg
+and 20 deg for 2-3 and 3-4 (those pairs were never flagged as a problem, and
+tier 4's rarity -- 34 of 2,322 dots -- already makes it easy to spot without
+hue doing extra work). Lightness still decreases in the same even ~0.133
+OKLCH-L steps as every prior ramp, preserving the colorblind-safety
+guarantee (order recoverable via light/dark alone regardless of hue
+confusion) -- widening hue gaps never came at the cost of that property.
+Tier 4 vs. the `#1a1a19` dark surface: 2.34:1 contrast (essentially
+unchanged from every earlier ramp's ~2.3:1).
+
+**Verified and committed 2026-09-12:** identical on-screen tier-color counts
+to every prior version (583/439/1266/34), confirming each recolor pass was
+purely visual, never a data change. **User's verdict: locked** -- "bright
+pops of color against the black background" is the aesthetic direction, a
+real shift from the original single-hue-teal "moody/cohesive" starting
+point, and one the user explicitly wants considered as a starting palette
+family for future visuals on this blog, not treated as one-off to this
+chart. Next visual should start from this yellow/magenta/violet/blue-violet
+family (or the same lightness-first, hue-from-peak-chroma *method* on a new
+hue set) rather than reintroducing single-hue teal by default.
