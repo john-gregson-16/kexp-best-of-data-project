@@ -12,7 +12,8 @@ spokes are years with more entries (most years have 91, but 2012 has 120 and
 distinct albums that artist has had across *all 25 years combined* — darker
 and bigger means a more consistently list-worthy artist over the full
 quarter-century, not just this one year. Use the checkboxes below to
-highlight specific years.
+highlight specific years, or search for an artist to see every year they
+made the list.
 
 ```js
 const rows = FileAttachment("data/annual_circle_2001_2025.csv").csv({typed: true});
@@ -49,6 +50,103 @@ const selectedYears = view(yearCheckboxes(years));
 ```
 
 ```js
+const artistList = (() => {
+  const seen = new Map();
+  for (const d of rows) if (!seen.has(d.artist_id)) seen.set(d.artist_id, d.artist_name);
+  return Array.from(seen, ([id, name]) => ({id, name})).sort((a, b) => a.name.localeCompare(b.name));
+})();
+```
+
+```js
+function artistSearch(list) {
+  const container = document.createElement("div");
+  container.style.cssText = "position:relative;max-width:320px;margin:0.25rem 0 0.75rem;";
+
+  const row = document.createElement("div");
+  row.style.cssText = "display:flex;align-items:center;gap:8px;";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = "Search for an artist…";
+  input.autocomplete = "off";
+  input.style.cssText = "flex:1;box-sizing:border-box;padding:8px 10px;font-size:14px;border:1px solid var(--theme-foreground-faint);border-radius:6px;background:var(--theme-background);color:var(--theme-foreground);";
+
+  const clearBtn = document.createElement("button");
+  clearBtn.type = "button";
+  clearBtn.textContent = "Clear";
+  clearBtn.style.cssText = "font-size:13px;padding:7px 10px;border-radius:6px;border:1px solid var(--theme-foreground-faint);background:transparent;color:var(--theme-foreground);cursor:pointer;display:none;";
+
+  row.append(input, clearBtn);
+
+  const suggestions = document.createElement("div");
+  suggestions.style.cssText = "position:absolute;top:100%;left:0;right:0;background:#1a1a19;border:1px solid #383835;border-radius:8px;margin-top:4px;max-height:240px;overflow-y:auto;z-index:20;display:none;";
+
+  container.append(row, suggestions);
+
+  Object.defineProperty(container, "value", {
+    get() {
+      return container._selectedId ?? null;
+    },
+  });
+
+  function renderSuggestions(query) {
+    suggestions.innerHTML = "";
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      suggestions.style.display = "none";
+      return;
+    }
+    const matches = list.filter((a) => a.name.toLowerCase().includes(q)).slice(0, 8);
+    if (!matches.length) {
+      suggestions.style.display = "none";
+      return;
+    }
+    for (const a of matches) {
+      const item = document.createElement("div");
+      item.textContent = a.name;
+      item.style.cssText = "padding:8px 10px;cursor:pointer;color:#f0efec;font-size:14px;";
+      item.addEventListener("pointerenter", () => (item.style.background = "#2a2a27"));
+      item.addEventListener("pointerleave", () => (item.style.background = "transparent"));
+      item.addEventListener("mousedown", (event) => {
+        event.preventDefault();
+        select(a);
+      });
+      suggestions.append(item);
+    }
+    suggestions.style.display = "block";
+  }
+
+  function select(a) {
+    container._selectedId = a.id;
+    input.value = a.name;
+    suggestions.style.display = "none";
+    clearBtn.style.display = "inline-block";
+    container.dispatchEvent(new Event("input"));
+  }
+
+  function clear() {
+    container._selectedId = null;
+    input.value = "";
+    suggestions.style.display = "none";
+    clearBtn.style.display = "none";
+    input.focus();
+    container.dispatchEvent(new Event("input"));
+  }
+
+  input.addEventListener("input", () => {
+    container._selectedId = null;
+    clearBtn.style.display = "none";
+    renderSuggestions(input.value);
+  });
+  clearBtn.addEventListener("click", clear);
+
+  return container;
+}
+
+const selectedArtist = view(artistSearch(artistList));
+```
+
+```js
 const tierColor = {1: "#f9d53f", 2: "#e67bf7", 3: "#9c57f3", 4: "#5127e9"};
 const tierSize = {1: 2.2, 2: 2.8, 3: 3.6, 4: 4.8};
 
@@ -64,7 +162,7 @@ const innerR = 180;      // hub radius -- large enough that band-0's wedge
                           // width doesn't cross into neighboring years' spokes
 const dimOpacity = 0.12; // opacity for years unchecked in the filter
 
-function annualCircle(data, selectedYears) {
+function annualCircle(data, selectedYears, selectedArtist) {
   const years = d3.sort(new Set(data.map((d) => d.list_year)));
   const selected = new Set(selectedYears);
   const maxRank = d3.max(data, (d) => d.rank);
@@ -178,9 +276,11 @@ function annualCircle(data, selectedYears) {
     .join("circle")
     .attr("cx", (d) => xy(d.list_year, d.rank)[0])
     .attr("cy", (d) => xy(d.list_year, d.rank)[1])
-    .attr("r", (d) => tierSize[d.tier])
+    .attr("r", (d) => tierSize[d.tier] * (d.artist_id === selectedArtist ? 1.8 : 1))
     .attr("fill", (d) => tierColor[d.tier])
-    .attr("opacity", (d) => (selected.has(d.list_year) ? 1 : dimOpacity))
+    .attr("stroke", (d) => (d.artist_id === selectedArtist ? "#f0efec" : "none"))
+    .attr("stroke-width", 1.5)
+    .attr("opacity", (d) => (d.artist_id === selectedArtist ? 1 : selected.has(d.list_year) ? 1 : dimOpacity))
     .on("pointerenter", (event, d) => {
       tooltip
         .style("opacity", 1)
@@ -200,7 +300,7 @@ function annualCircle(data, selectedYears) {
 <div class="card" style="background:#1a1a19;padding:1.5rem;max-width:820px;margin:0 auto;">
 
 ```js
-annualCircle(rows, selectedYears)
+annualCircle(rows, selectedYears, selectedArtist)
 ```
 
 <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:1rem;justify-content:center;">
@@ -211,6 +311,66 @@ annualCircle(rows, selectedYears)
 </div>
 
 </div>
+
+```js
+function artistTable(artistId, data) {
+  const container = document.createElement("div");
+  container.style.cssText = "margin:1rem 0 1.5rem;";
+
+  if (!artistId) {
+    container.style.cssText += "color:var(--theme-foreground-muted);font-size:14px;";
+    container.textContent = "Search for an artist above to see every year they made the list, highlighted on the wheel too.";
+    return container;
+  }
+
+  const entries = data.filter((d) => d.artist_id === artistId).sort((a, b) => a.list_year - b.list_year);
+  const tierLabel = {1: "1 album", 2: "2 albums", 3: "3–9 albums", 4: "10+ albums"};
+
+  const heading = document.createElement("div");
+  heading.style.cssText = "font-weight:600;font-size:15px;margin-bottom:0.5rem;";
+  heading.textContent = `${entries[0].artist_name} — ${entries.length} appearance${entries.length === 1 ? "" : "s"} (${tierLabel[entries[0].tier]} across all 25 years)`;
+
+  const tableWrap = document.createElement("div");
+  tableWrap.style.cssText = "overflow-x:auto;";
+
+  const table = document.createElement("table");
+  table.style.cssText = "width:100%;max-width:520px;border-collapse:collapse;font-size:14px;";
+
+  const thead = document.createElement("thead");
+  const headRow = document.createElement("tr");
+  for (const label of ["Year", "Rank", "Album"]) {
+    const th = document.createElement("th");
+    th.textContent = label;
+    th.style.cssText = "text-align:left;padding:6px 12px 6px 0;border-bottom:1px solid var(--theme-foreground-faint);color:var(--theme-foreground-muted);font-weight:600;";
+    headRow.append(th);
+  }
+  thead.append(headRow);
+
+  const tbody = document.createElement("tbody");
+  for (const d of entries) {
+    const tr = document.createElement("tr");
+    const tdYear = document.createElement("td");
+    tdYear.textContent = d.list_year;
+    tdYear.style.cssText = "padding:6px 12px 6px 0;border-bottom:1px solid var(--theme-foreground-faint);";
+    const tdRank = document.createElement("td");
+    tdRank.textContent = `#${d.rank}`;
+    tdRank.style.cssText = "padding:6px 12px;border-bottom:1px solid var(--theme-foreground-faint);";
+    const tdAlbum = document.createElement("td");
+    tdAlbum.textContent = d.release_group_name;
+    tdAlbum.style.cssText = "padding:6px 12px;border-bottom:1px solid var(--theme-foreground-faint);";
+    tr.append(tdYear, tdRank, tdAlbum);
+    tbody.append(tr);
+  }
+  table.append(thead, tbody);
+  tableWrap.append(table);
+  container.append(heading, tableWrap);
+  return container;
+}
+```
+
+```js
+artistTable(selectedArtist, rows)
+```
 
 ## Key findings
 

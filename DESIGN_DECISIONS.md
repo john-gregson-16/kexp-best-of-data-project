@@ -575,3 +575,56 @@ independent verification plus visual consistency with every other
 successfully-rendered element on this page (same card/text-color/spacing
 system), without a final live screenshot. **Worth a spot-check next time
 the dev server is opened normally**, outside this session's environment.
+
+## Searchable artist: search box + release table + wheel highlight (2026-09-12)
+
+**Scope decision, made explicit before building:** "searchable artist
+table" turned out to mean three things at once when discussed with the
+user -- a search box, a results table, and wheel highlighting. Built all
+three rather than picking one, because the table alone can't show *which*
+dots are the artist's without forcing a manual hover-hunt across up to 25
+spokes, and the wheel-highlight alone can't show exact years/ranks/album
+titles. Each piece covers what the other can't.
+
+**Search mechanics: substring match + suggestion list, not fuzzy
+matching.** With ~1,094 distinct artists, a plain case-insensitive
+`.includes()` filter capped at 8 suggestions handles real usage without
+the complexity (and failure modes) of a fuzzy/typo-tolerant algorithm.
+Picking from the filtered list rather than free-text-submit also sidesteps
+ambiguity -- the selected value is always a real `artist_id`, never a
+guess at what the user meant.
+
+**Hand-built widget, not a form-input library** -- same reasoning as the
+year checkboxes: this sandbox can't reach the CDN Framework would fetch
+`Inputs` from. Consistent with that precedent, `artistSearch()` is a plain
+`<input>` + a floating suggestion `<div>`, exposing a `.value` getter and
+dispatching a synthetic `input` event on selection/clear so `view()` picks
+it up the same way it would an `Inputs` element.
+
+**Wheel highlight uses two independent visual channels, not one.** The
+existing year-checkbox dimming already claims *opacity* to mean "which
+years are in scope." Reusing opacity for "which artist is selected" would
+either conflict with that or require picking a precedence rule. Instead,
+a matched artist's dots get **enlarged (1.8x radius) and a light stroke
+ring**, layered independently of the opacity channel -- and their opacity
+is explicitly forced to 1 regardless of the year checkboxes, since a
+reader who searched for an artist should be able to find every one of
+their dots immediately, not have some silently dimmed because that year
+happened to be unchecked.
+
+**Results table lives on the light page, not a dark card** -- a table of
+text rows is closer to structured prose than to a "visual" in the sense
+the dark-surface standing rule was written for (radial/spoke charts that
+read as an instrument). Uses the page's own theme CSS variables
+(`--theme-foreground`, `--theme-foreground-faint`, etc.) rather than
+hardcoded hex, which is the *opposite* of the dark-card rule and correct
+here specifically because this content sits on the light page, not inside
+`#1a1a19`.
+
+**Verified live** (environment had broken again per the pattern above; one
+more `preview_stop`/close-tab/`preview_start` cycle recovered it): typing
+"wilco" surfaces a single "Wilco" suggestion; selecting it shows a table
+headed "Wilco -- 11 appearances (10+ albums across all 25 years)" with all
+11 rows correct (including Yankee Hotel Foxtrot at #1 in 2002), and
+enlarges/rings exactly the matching dots on the wheel. Clear correctly
+resets both the input and the wheel to its unhighlighted state.
