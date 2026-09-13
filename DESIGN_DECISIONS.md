@@ -808,3 +808,37 @@ anywhere in the rendered page, and the on-screen tier-2 count still reads
 439 (matching every prior verification of this exact metric) -- confirms
 this was purely a recolor, not a data change, exactly like every other
 palette pass on this page.
+
+### Tier-2 recolor, take two: pink retired, teal locked in (2026-09-13)
+
+**Even the desaturated rose (above) didn't land** -- user's real feedback
+after living with it: still "too rosy" regardless of saturation, and the
+underlying request shifted from "make the pink less loud" to "I don't
+want pink at all, in a hue that still fits the wheel's purple-dominant
+look." Explored via a dedicated comparison tool (7 full alternate 4-color
+ramps, published as an artifact, each shown as both a small dot fan and a
+large stacked bar) rather than iterating on tier 2 alone -- user's
+favorite of the seven was "Cool ocean," but wanted to keep tiers 1/3/4
+exactly as already locked (yellow / violet / blue-violet) rather than
+adopting a whole new ramp, since that combination's "purple dominance
+against black" was explicitly not something to disturb.
+
+**Fix: tier 2 only, hue swapped to a cool teal/cyan (H=190), lightness
+left at the original 0.747** (unchanged, so the validated monotonic-
+lightness safety ramp needed zero rework) -- `#d58fdf` (rose) ->
+`#38c4bd` (teal). Landed on teal over a same-lightness azure alternative
+(`#37bde9`, H=225) after comparing both live, split down the middle of
+the actual rendered wheel: teal sits 110/90 degrees from tiers 3/4 in hue
+vs. azure's 75/55, so it reads as a clearly separate color rather than
+blending toward the violet family the way the azure option did.
+
+**Tiers 1, 3, and 4 are completely untouched** -- yellow `#f9d53f`,
+violet `#9c57f3`, blue-violet `#5127e9`, same as since the very first
+multi-hue pass. This is deliberately a one-tier fix, not a new ramp.
+
+**Verified live:** rendered both teal and azure candidates directly in
+the live wheel (not just an abstract swatch), including a literal
+split-down-the-middle comparison (left half of the wheel recolored teal,
+right half azure, everything else identical) to make the choice on the
+real thing rather than side-by-side swatches. On-screen tier-2 count
+unchanged at 439 throughout every trial.
