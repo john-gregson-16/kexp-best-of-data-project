@@ -776,3 +776,35 @@ be confused with real data.
 both now sit together in the top-right corner with no nearby spoke's own
 pattern competing with it, and the hub's curved arrow is untouched next to
 2001.
+
+### Tier-2 recolor: less saturated pink (2026-09-13)
+
+**User's real-use feedback:** the locked tier-2 magenta (`#e67bf7`, 90% of
+max chroma at its hue/lightness) looked fine as small dots on the wheel
+but read as "too much pink" once it appeared as a large fill -- a full-
+width bar, a stacked-chart segment, a line -- in the below-the-fold
+charts. Explicitly not a rejection of the hue itself, just its intensity
+at scale.
+
+**Fix: same hue (322deg) and same lightness (0.747), chroma reduced from
+90% to 60% of the gamut maximum -- `#e67bf7` -> `#d58fdf`.** Deliberately
+did not touch lightness to fix this: lightness is what carries the
+colorblind-safety guarantee (order recoverable via light/dark regardless
+of hue), so it was left exactly where the original validated ramp put it.
+Chroma is the "vividness" knob and was always the correct lever for
+"this feels too loud/saturated" -- a purely cosmetic axis that doesn't
+touch the ramp's safety property at all.
+
+**Candidates considered before picking 60%:** 75% (`#dd86eb`, small
+change), 60% (`#d58fdf`, chosen), 45% (`#cb98d3`, quite muted), 30%
+(`#c29fc7`, risked reading as washed-out at the wheel's small dot sizes).
+60% was the pick because it needed to still read clearly as its own color
+family at both extremes this hue is used at -- a handful of small dots on
+the wheel, and a solid full-width bar in the cohort chart -- not just look
+right in one context.
+
+**Verified live:** confirmed zero remaining references to the old hex
+anywhere in the rendered page, and the on-screen tier-2 count still reads
+439 (matching every prior verification of this exact metric) -- confirms
+this was purely a recolor, not a data change, exactly like every other
+palette pass on this page.
