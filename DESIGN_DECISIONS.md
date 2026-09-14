@@ -883,3 +883,13 @@ untouched. Also updated the turnover-rate line chart's color (`#f9d53f`
 "first appearance" concept -- five total occurrences changed, verified
 zero remaining references to the old yellow anywhere on the page and the
 on-screen tier-1 count unchanged at 583.
+
+**Palette closed for now, one open note:** user's own words -- "I don't
+think I'm ever going to be satisfied with the palette, but this is good
+for now." Explicitly not chasing this further without a fresh trigger.
+One specific complaint left on the table: the ramp reads fine in the
+wheel, the line chart, and the horizontal bar chart, but feels flat
+("blah") in the *column* (vertical bar) charts specifically -- i.e. the
+rank-vs-familiarity chart. Not diagnosed or acted on; revisit if/when the
+user brings fresh inspiration from other sites/blogs, rather than
+generating more candidates blind.
