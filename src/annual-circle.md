@@ -172,7 +172,7 @@ const selectedArtist = view(artistSearch(artistList));
 ```
 
 ```js
-const tierColor = {1: "#f9d53f", 2: "#38c4bd", 3: "#9c57f3", 4: "#5127e9"};
+const tierColor = {1: "#fac45a", 2: "#38c4bd", 3: "#9c57f3", 4: "#5127e9"};
 const tierSize = {1: 2.2, 2: 2.8, 3: 3.6, 4: 4.8};
 
 // Layout constants (fixed pixel geometry, not proportional to container width
@@ -383,7 +383,7 @@ annualCircle(rows, selectedYears, selectedArtist)
 ```
 
 <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:1rem;justify-content:center;">
-  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:11px;height:11px;border-radius:50%;background:#f9d53f;display:inline-block"></span>1 album</span>
+  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:11px;height:11px;border-radius:50%;background:#fac45a;display:inline-block"></span>1 album</span>
   <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:14px;height:14px;border-radius:50%;background:#38c4bd;display:inline-block"></span>2 albums</span>
   <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:18px;height:18px;border-radius:50%;background:#9c57f3;display:inline-block"></span>3&ndash;9 albums</span>
   <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:24px;height:24px;border-radius:50%;background:#5127e9;display:inline-block"></span>10+ albums</span>
@@ -660,7 +660,7 @@ tierTrendChart(yearStats)
 ```
 
 <div style="display:flex;gap:20px;flex-wrap:wrap;margin:0.75rem 0 1rem;justify-content:center;">
-  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#f9d53f;display:inline-block"></span>1 album</span>
+  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#fac45a;display:inline-block"></span>1 album</span>
   <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#38c4bd;display:inline-block"></span>2 albums</span>
   <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#9c57f3;display:inline-block"></span>3&ndash;9 albums</span>
   <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#5127e9;display:inline-block"></span>10+ albums</span>
@@ -842,7 +842,7 @@ rankTrendChart(rankBandStats)
 ```
 
 <div style="display:flex;gap:20px;flex-wrap:wrap;margin:0.75rem 0 1rem;justify-content:center;">
-  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#f9d53f;display:inline-block"></span>1st appearance</span>
+  <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#fac45a;display:inline-block"></span>1st appearance</span>
   <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#38c4bd;display:inline-block"></span>2nd appearance</span>
   <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#9c57f3;display:inline-block"></span>3rd&ndash;9th appearance</span>
   <span style="display:flex;align-items:center;gap:6px;font-size:13px;color:#c9c8c3"><span style="width:12px;height:12px;border-radius:3px;background:#5127e9;display:inline-block"></span>10th+ appearance</span>
@@ -884,7 +884,7 @@ function turnoverLineChart(stats) {
   const marginL = 40, marginR = 16, marginT = 16, marginB = 46;
   const plotW = width - marginL - marginR;
   const plotH = height - marginT - marginB;
-  const color = "#f9d53f";
+  const color = "#fac45a";
 
   const x = d3.scalePoint(stats.map((d) => d.year), [0, plotW]);
   const y = d3.scaleLinear([0, 100], [plotH, 0]);

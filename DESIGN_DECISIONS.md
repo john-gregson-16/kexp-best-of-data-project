@@ -842,3 +842,44 @@ split-down-the-middle comparison (left half of the wheel recolored teal,
 right half azure, everything else identical) to make the choice on the
 real thing rather than side-by-side swatches. On-screen tier-2 count
 unchanged at 439 throughout every trial.
+
+### Tier-1 recolor: yellow to true gold (2026-09-13)
+
+**User liked the current yellow, but was curious what a more golden/orange
+option would look like** once tier 2 had settled on teal -- purely
+exploratory going in, not a complaint about tier 1. Computed three real
+candidates at the same tier-1 lightness family: **A** (`#fbd360`, same
+L=0.88, barely warmer), **B** (`#fac45a`, L=0.85, true gold), and **C**
+(`#fab965`, L=0.83, amber/orange, the deepest option that still clears a
+safe lightness gap above tier 2's teal). A fourth, bolder orange option
+was computed and rejected before it was ever shown -- at the lightness
+true orange needs to look vivid, its gap above tier 2 dropped to 0.053,
+under the 0.06 colorblind-safety floor.
+
+**Real physical constraint worth remembering for future palette work:**
+orange/gold hues can't hold much chroma at high lightness in sRGB --
+pushing tier 1 toward orange at its *original* lightness (0.88) just
+produces pale peach, not vivid gold. Getting real "gold" required also
+lowering lightness slightly (0.88 -> 0.85 for B), trading a little
+brightness for real warmth. This is the same physical fact that shaped
+the original locked ramp (tier 1's hue was chosen from *where yellow is
+brightest*, not an arbitrary "yellow" pick) -- it just wasn't visible
+again until pushing further toward orange.
+
+**Comparison method note, for future reference:** the first attempt to
+show these live re-used the browser-automation tab directly, on the
+assumption the user could see the same tab -- they couldn't ("was I
+supposed to see something change?"). Fell back to the artifact-based
+comparison tool (already proven to work earlier in this same
+conversation) instead of continuing to describe changes in a pane the
+user had no visibility into. Lesson: a live edit made through this
+session's own browser-automation tools is only confirmed visible to the
+user via an explicit signal (they react to something specific in it) --
+never assume a shared pane is being watched in real time.
+
+**Locked: Option B, `#fac45a`.** Tiers 2/3/4 (teal, violet, blue-violet)
+untouched. Also updated the turnover-rate line chart's color (`#f9d53f`
+-> `#fac45a`), which reuses tier 1's hue since it represents the same
+"first appearance" concept -- five total occurrences changed, verified
+zero remaining references to the old yellow anywhere on the page and the
+on-screen tier-1 count unchanged at 583.
