@@ -1,4 +1,4 @@
-# Current Rotation — Project Brief
+# Dig Me Out(liers & Trends) — Project Brief
 
 Origin: derived from the data pipeline at `D:\_Audio_KEXP` (KEXP listener "Best Of"
 list play-history analysis). That project stays entirely separate and private —
@@ -7,10 +7,26 @@ decisions below.
 
 ## Name
 
-**Current Rotation** — locked 2026-09-17, after an extended naming pass (see
-"Naming, in full" below for the path that led here). Deliberately does not use
+**Dig Me Out(liers & Trends)** — locked 2026-09-21, after an extended naming
+pass (see "Naming, in full" below for the full path, including one prior
+locked-then-reconsidered name, Current Rotation). Deliberately does not use
 the owner's real name, keeping the separation from the Microsoft/GitHub work
 identity intact.
+
+**Two renderings, on purpose:**
+- **Stylized/full form** — `Dig Me Out(liers & Trends)` — for the site header,
+  page title, and anywhere the visual trick (a smaller/lighter "(liers &
+  Trends)" hanging off the album title) can actually render.
+- **Plain-text form** — `Dig Me Outliers` — for the domain, social handles,
+  and anywhere parentheses/ampersands don't work. Still carries the whole
+  pun; "& Trends" is the stylized version's flourish, not load-bearing.
+
+Riffs on *Dig Me Out*, the 1997 Sleater-Kinney album — a real favorite of the
+owner's, not a generic pop-culture reference. "Outliers" and "Trends" aren't
+decorative data-flavor words either: they're literally what the KEXP Annual
+Best-Of analysis does (the tier cutoffs were found via outlier-cliff
+detection; half the below-the-fold charts are trend analysis over 25 years) —
+the two halves of the pun are both true, not just clever.
 
 ## What this is
 
@@ -58,7 +74,35 @@ Considered and checked for collisions along the way:
   phrase for whatever someone's into *right now*, independent of medium —
   captures "topics come and go" directly, without needing explanation, and
   matches the unpretentious grandpa's-turntable register better than a more
-  writerly pun would. **Locked.**
+  writerly pun would. **Locked 2026-09-17, then reconsidered 2026-09-20**:
+  owner realized 89.3 The Current (KCMP, Minneapolis) is a real, prominent
+  public radio station explicitly modeled on stations like KEXP itself
+  (non-commercial, listener-supported, indie/alternative format) — close
+  enough to a direct KEXP peer that "Current Rotation" risked reading as
+  affiliated with a competing station. Confirmed via search before agreeing
+  the concern was well-founded, not just a hunch.
+- **Deep Cuts, revisited** — the first collision check (against Rotation/
+  Liner Notes) undersold how generic the phrase actually is; a deeper pass
+  found a live site (deepcuts.net), a blog running an actual "Deep Cuts"
+  section (deepcut.co), and several social accounts. The specific stylized
+  handle `deep_cuts` had no exact collision, but the underlying phrase
+  carries more SEO noise than it first appeared to.
+- **Signal and Noise** — re-surfaced (first proposed much earlier in the
+  naming search) specifically for its music+data double meaning (radio
+  signal / statistical signal-vs-noise). Rejected on a proper check: a real,
+  respected decades-old quarterly journal called *Signal to Noise Magazine*
+  covers almost the exact same space (experimental/improvised music
+  criticism) — a direct hit, not generic noise, plus a well-known unrelated
+  tech blog (Signal v. Noise) adding further confusion.
+- **The Sound and the Theory** — a pun on Faulkner's *The Sound and the
+  Fury* (itself from Macbeth), swapping in a near-rhyme that's also real
+  music vocabulary (music theory) and doubles as "an analytical take."
+  Checked clean, genuinely in the running, but set aside once **Dig Me
+  Out(liers & Trends)** came together as more personally specific — a
+  favorite band's own album, not a public-domain literary reference.
+- **Dig Me Out(liers & Trends)** — checked clean (bare "Dig Me Out" only
+  surfaces the actual Sleater-Kinney album and reviews of it; "Dig Me
+  Outliers" / "digmeoutliers" returned zero results anywhere). **Locked.**
 
 ## Content taxonomy (tags)
 
@@ -133,7 +177,7 @@ since double-tagging every post with both would mostly repeat the same signal
 - First post shared via KEXP's Discord, the KEXP subreddit, and personal KEXP
   contacts; organic from there.
 
-## Status (as of 2026-09-17)
+## Status (as of 2026-09-21)
 
 **Built and working, this repo:**
 - Full Observable Framework scaffold, Node installed, dev server running.
