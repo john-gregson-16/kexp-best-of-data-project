@@ -963,3 +963,33 @@ still open):**
    script once per post (or once sitewide via a Ghost code-injection
    snippet, cleaner if there ends up being more than one embedded chart
    per post).
+
+**Hosting picked and live (2026-09-22): GitHub Pages.** Went with the
+recommendation above rather than exploring alternatives further -- same
+public repo already used for the "open source to a point" model, zero new
+accounts. Set up as `.github/workflows/deploy-pages.yml`: builds with
+`npm ci && npm run build` and deploys `dist/` via
+`actions/upload-pages-artifact` + `actions/deploy-pages` on every push to
+`main`. Live at `https://john-gregson-16.github.io/kexp-best-of-data-project/`.
+
+One real setup snag, worth remembering if this ever needs to be redone on
+another repo: the very first time a repo's Pages site is created, the
+workflow's own `GITHUB_TOKEN` cannot create it via API -- tried
+`actions/configure-pages`'s `enablement: true` explicitly and still got
+`Resource not accessible by integration` on the "create Pages site" call.
+This is a hard one-time gate GitHub puts on the owner, not a config
+mistake: the repo owner has to flip Settings -> Pages -> "Build and
+deployment" -> Source to **GitHub Actions** once, by hand, before any
+workflow can deploy. After that one manual step, the push-triggered
+workflow deployed successfully on the next run with no other changes.
+
+Also confirmed while setting this up: Framework's own build output uses
+fully relative asset paths throughout (`./_observablehq/...`,
+`./_file/...`, `FileAttachment("./data/...")`) -- tried adding a `base`
+config for the GitHub Pages project-site subpath first, on the assumption
+it would be needed, and it produced zero difference in the built HTML
+(grepped for it, found nothing). Removed it rather than leave dead
+config in the repo. Framework's `base` option exists for something else
+that wasn't exercised here (possibly absolute canonical/og URLs or a
+generated sitemap, neither of which this project uses yet) -- worth
+re-checking if either of those gets added later.

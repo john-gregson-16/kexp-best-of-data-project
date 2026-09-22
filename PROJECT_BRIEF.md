@@ -198,10 +198,18 @@ since double-tagging every post with both would mostly repeat the same signal
   end-to-end against a mock Ghost post (2026-09-22) and works: static-hosted
   Framework build + cross-origin `<iframe>` + the `iframe-resizer` library for
   auto-height, no chrome-free "embed" page needed. Full write-up in
-  `DESIGN_DECISIONS.md`. Still open: which static host actually serves the
-  build (GitHub Pages recommended, not yet set up), and re-confirming against
-  a real Ghost instance once one exists.
+  `DESIGN_DECISIONS.md`. Still open: re-confirming against a real Ghost
+  instance once one exists.
 - No domain name registered yet.
+
+**Built and working, hosting (2026-09-22):**
+- GitHub Pages is live at
+  `https://john-gregson-16.github.io/kexp-best-of-data-project/` (project
+  site, no custom domain), deployed automatically by
+  `.github/workflows/deploy-pages.yml` on every push to `main`. This is the
+  static-hosting half of the embed mechanism above -- a real Ghost post's
+  `<iframe>` would point at a URL under this domain, e.g.
+  `.../annual-circle`.
 - No narrative/blog-post text written yet to accompany the wheel — the
   chart exists as a standalone page, not yet wired into any site navigation
   or framed as an actual post.
