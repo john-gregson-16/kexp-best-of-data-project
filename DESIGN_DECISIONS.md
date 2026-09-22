@@ -893,3 +893,73 @@ wheel, the line chart, and the horizontal bar chart, but feels flat
 rank-vs-familiarity chart. Not diagnosed or acted on; revisit if/when the
 user brings fresh inspiration from other sites/blogs, rather than
 generating more candidates blind.
+
+## Ghost embed mechanism -- tested and working (2026-09-22)
+
+**The question:** how does an Observable Framework page (e.g.
+`annual-circle`) actually end up inside a Ghost blog post. Never built or
+tested before this session; `PROJECT_BRIEF.md` flagged it as a decision
+that should happen before committing to Ghost hosting.
+
+**What was tested, concretely, not just discussed:** built the real site
+(`npm run build`), served `dist/` from a plain static file server to
+stand in for wherever it ends up hosted, then built a mock Ghost post --
+plain HTML with a light "Casper-style" reading column -- containing an
+`<iframe>` pointed at the built `annual-circle.html`, cross-origin (two
+different localhost ports, so the test wasn't hiding a same-origin
+shortcut). Loaded it in the browser and drove it directly: toggled year
+checkboxes, typed an artist name into the search box, clicked the
+suggestion, confirmed the wheel highlight + release table all render and
+behave identically inside the iframe as they do standalone. Full
+cross-origin JS/CSV fetches (D3, the chart's own CSV data) all loaded
+fine from the child origin -- confirms static-hosted Framework output
+works as a normal iframe target, no special server config needed.
+
+**The one real gap: iframe height.** A plain `<iframe>` needs a fixed
+height, but this page's height changes (search results add a table,
+below-the-fold content is long). Solved with **iframe-resizer**
+(`iframe-resizer` on npm, MIT-licensed core / GPLv3 for the free "full"
+build used here) -- a small, established library (not something bespoke):
+a parent-side script in the Ghost post's HTML card, and a child-side
+script the *embedded page itself* loads. Confirmed the child script can
+be added for free via Observable Framework's own per-page frontmatter
+`head:` key (`src/*.md` files can set `head`, `sidebar`, `toc`, `header`,
+`footer`, `pager` individually -- checked directly against
+`node_modules/@observablehq/framework/dist/frontMatter.js` rather than
+assumed) -- no separate build step or extra route needed. Tested this
+exact setup (parent script + injected child script) end to end: the
+iframe grew and shrank correctly as the year-checkbox list, the wheel,
+and then the Wilco release table (11 rows) all appeared, with no internal
+scrollbar and no visible cut-off.
+
+**No separate "chrome-free" embed page needed.** Worried the Framework
+theme's sidebar/header might double up against Ghost's own site nav
+inside the iframe. Checked empirically at both a narrow width (~360px,
+representative of a phone-width Ghost column) and 900px (desktop) --
+Framework's sidebar toggle exists in the DOM but never renders as visible
+chrome at either width tested. `annual-circle.md` already has `toc:
+false` set; no further `sidebar:`/`header:`/`footer:` overrides turned
+out to be necessary based on this test. Revisit only if a real Ghost
+embed later shows chrome bleeding through at some width not tested here.
+
+**One real warning surfaced, not yet a problem:** iframe-resizer's own
+console output flagged that the Framework theme sets
+`max-width: var(--observablehq-max-width)` on `<body>`, which it says
+"may cause issues" with its own width detection. Did not visibly break
+anything in this test (height-only resizing, not width), but worth a
+second look once this is tested against a real Ghost instance rather
+than a mock post shell.
+
+**Recommended concrete setup (not yet locked -- hosting choice specifically
+still open):**
+1. Host the Framework `dist/` build as a static site. GitHub Pages is the
+   natural fit -- same public repo already used for the "open source to a
+   point" data-sharing model, no new account/service to stand up.
+2. Add the iframe-resizer child script to `annual-circle.md`'s `head:`
+   frontmatter (or site-wide via `observablehq.config.js`'s `head`, so
+   every future chart page gets it automatically).
+3. Each Ghost post that embeds a chart uses an HTML card: an `<iframe>`
+   pointed at that page's hosted URL, plus the iframe-resizer parent
+   script once per post (or once sitewide via a Ghost code-injection
+   snippet, cleaner if there ends up being more than one embedded chart
+   per post).

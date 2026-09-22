@@ -194,8 +194,13 @@ since double-tagging every post with both would mostly repeat the same signal
 **Not yet started:**
 - Ghost is not set up at all (self-hosted vs. Ghost(Pro) undecided, per
   above).
-- The Observable-Framework-into-Ghost embedding mechanism has never actually
-  been built or tested.
+- The Observable-Framework-into-Ghost embedding mechanism has been tested
+  end-to-end against a mock Ghost post (2026-09-22) and works: static-hosted
+  Framework build + cross-origin `<iframe>` + the `iframe-resizer` library for
+  auto-height, no chrome-free "embed" page needed. Full write-up in
+  `DESIGN_DECISIONS.md`. Still open: which static host actually serves the
+  build (GitHub Pages recommended, not yet set up), and re-confirming against
+  a real Ghost instance once one exists.
 - No domain name registered yet.
 - No narrative/blog-post text written yet to accompany the wheel — the
   chart exists as a standalone page, not yet wired into any site navigation
