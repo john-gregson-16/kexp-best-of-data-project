@@ -993,3 +993,46 @@ config in the repo. Framework's `base` option exists for something else
 that wasn't exercised here (possibly absolute canonical/og URLs or a
 generated sitemap, neither of which this project uses yet) -- worth
 re-checking if either of those gets added later.
+
+## Ghost: running locally first, free (2026-09-23)
+
+**Decision:** install Ghost locally via `ghost-cli` (SQLite, no Docker,
+no database server) rather than paying for Ghost(Pro) or a VPS before
+there's any real content to publish. Zero cost, fully reversible, lets
+the actual site/theme/embed get built out now. Self-hosted vs. Ghost(Pro)
+for the real public launch is still an open decision -- this doesn't
+answer that, it just unblocks building in the meantime.
+
+**Lives outside this repo, on purpose:** the Ghost install is at
+`D:\DigMeOutliers-Ghost`, a sibling directory to `D:\_KEXP_Blog`, not
+inside it and not committed to the public GitHub repo. Matches the
+existing "open source to a point" data-sharing model -- the public repo
+is Framework site/viz code only; Ghost's own database, theme, and any
+draft post content are the owner's, not meant to be public by default.
+
+**Node version snag, worth remembering:** Ghost v6.65.0 requires Node
+`^22.23.1 || ^24.20.0`. The system Node was v24.19.0 -- one patch version
+short. winget's own Node.js package listing was stale and reported no
+upgrade available even though nodejs.org already had v24.21.0 (LTS
+"Krypton") published. Tried the official MSI installer for v24.21.0
+first; it failed (exit 1603) because this session can't pass the UAC
+elevation prompt Node's installer requires. Solved by using Node's
+portable Windows zip build instead -- extracted to `D:\tools\node-v24.21.0-win-x64`,
+used only for Ghost, system Node left untouched at v24.19.0 (still fine
+for the Framework project, which only needs Node >=18).
+
+Because of that, every `ghost` CLI command in this folder needs the
+portable Node ahead of the system one on `PATH`. Wrote
+`D:\DigMeOutliers-Ghost\ghost.bat` (same pattern as this repo's own
+`dev.bat`) so `ghost.bat start` / `stop` / `status` / `restart` / `log`
+just work without having to remember that path each time. One practical
+consequence: Ghost's local process manager is Ghost-CLI's own "local"
+manager, not a Windows service -- it does not survive a reboot. After
+restarting the machine, `ghost.bat start` needs to be run again to bring
+the site back up.
+
+**One-time setup step deliberately left to the owner:** Ghost's own
+first-run admin account creation (site title, name, email, password) at
+`http://localhost:2368/ghost/` was not filled in on the owner's behalf --
+account/password creation stays a manual, owner-only step even for a
+local instance.

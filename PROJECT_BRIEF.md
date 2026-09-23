@@ -210,6 +210,16 @@ since double-tagging every post with both would mostly repeat the same signal
   static-hosting half of the embed mechanism above -- a real Ghost post's
   `<iframe>` would point at a URL under this domain, e.g.
   `.../annual-circle`.
+
+**Built and working, Ghost (2026-09-23):**
+- Ghost is running locally (free, no hosting decision made yet) at
+  `D:\DigMeOutliers-Ghost` -- a sibling folder to this repo, not committed
+  to GitHub. `http://localhost:2368/ghost/` for admin,
+  `http://localhost:2368/` for the site itself. Start/stop with
+  `D:\DigMeOutliers-Ghost\ghost.bat start` / `stop` / `status` (a required
+  portable Node version wrapper -- see `DESIGN_DECISIONS.md` for why).
+  Self-hosted vs. Ghost(Pro) for the eventual public launch is still
+  undecided; this only unblocks building the site/theme/embed now.
 - No narrative/blog-post text written yet to accompany the wheel — the
   chart exists as a standalone page, not yet wired into any site navigation
   or framed as an actual post.
