@@ -1061,3 +1061,9 @@ site-wide head content it still wants, not just add to it.
 Ghost post itself: an HTML card with an `<iframe>` pointed at
 `https://john-gregson-16.github.io/kexp-best-of-data-project/annual-circle`,
 plus the iframe-resizer *parent* script + init call in the same card.
+Verified live in Ghost's own Preview (not just a mock post shell this
+time): the full page loads cross-origin from GitHub Pages, auto-resizes
+correctly through the checkboxes, the wheel, and into the below-the-fold
+key-findings charts, with no clipping or internal scrollbar. Saved as an
+unpublished draft titled "25 years of KEXP Annual Best-Of lists" -- not
+published, since there's no narrative text around it yet.
