@@ -1,6 +1,7 @@
 ---
 title: 25 years of KEXP Annual Best-Of lists
 toc: false
+head: '<link rel="icon" href="observable.png" type="image/png" sizes="32x32"><script src="https://cdn.jsdelivr.net/npm/iframe-resizer@5.5.9/js/iframeResizer.contentWindow.min.js"></script>'
 ---
 
 # 25 years of KEXP Annual Best-Of lists

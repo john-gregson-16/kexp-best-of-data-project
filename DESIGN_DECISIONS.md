@@ -1036,3 +1036,28 @@ first-run admin account creation (site title, name, email, password) at
 `http://localhost:2368/ghost/` was not filled in on the owner's behalf --
 account/password creation stays a manual, owner-only step even for a
 local instance.
+
+## Actually embedding the wheel in a post (2026-09-23)
+
+The mechanism tested against a mock post earlier only proved the pattern
+works -- the real `annual-circle.md` didn't yet have the iframe-resizer
+*child* script wired up permanently (the earlier test injected it into a
+one-off copy of the built file, `dist/annual-circle-embed-test.html`,
+never committed). Added it for real this time via frontmatter:
+
+```
+head: '<link rel="icon" href="observable.png" type="image/png" sizes="32x32"><script src="https://cdn.jsdelivr.net/npm/iframe-resizer@5.5.9/js/iframeResizer.contentWindow.min.js"></script>'
+```
+
+**Gotcha worth remembering:** Framework's page-level frontmatter `head`
+*replaces* `observablehq.config.js`'s site-wide `head` entirely, it
+doesn't merge with it (confirmed directly in
+`node_modules/@observablehq/framework/dist/markdown.js`'s `getHtml()`:
+`if (data[key] !== void 0) return data[key]`, no concatenation). Missed
+this at first and would have silently dropped the page's favicon link.
+Any page that sets its own `head:` frontmatter needs to repeat whatever
+site-wide head content it still wants, not just add to it.
+
+Ghost post itself: an HTML card with an `<iframe>` pointed at
+`https://john-gregson-16.github.io/kexp-best-of-data-project/annual-circle`,
+plus the iframe-resizer *parent* script + init call in the same card.
