@@ -220,9 +220,16 @@ since double-tagging every post with both would mostly repeat the same signal
   portable Node version wrapper -- see `DESIGN_DECISIONS.md` for why).
   Self-hosted vs. Ghost(Pro) for the eventual public launch is still
   undecided; this only unblocks building the site/theme/embed now.
-- No narrative/blog-post text written yet to accompany the wheel — the
-  chart exists as a standalone page, not yet wired into any site navigation
-  or framed as an actual post.
+- ~~No narrative/blog-post text written yet~~ — **done 2026-09-24.** Intro
+  (the 3-artist/10+-album hook) and closing (the tier-cutoff cliff, the
+  53.3% one-and-done stat) added around the embedded chart in the Ghost
+  draft. Still sitting unpublished — owner wants to sit with it first.
+- General sources/list-curation notes (from a Reddit post sharing the
+  original list file) saved verbatim at
+  `content-drafts/sources-and-curation-notes.md` — not yet placed
+  anywhere on the site. Covers the whole dataset, not one chart, so it
+  shouldn't be repeated per-post; leading idea is a dedicated page linked
+  from About and from each data post, not yet committed to.
 - Rollout shape undecided: several topics at launch vs. a single polished
   piece first. Current leaning (2026-09-13 conversation): ship this one
   piece well, with real commentary, rather than spreading thin across
