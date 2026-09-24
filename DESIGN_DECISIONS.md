@@ -1067,3 +1067,37 @@ correctly through the checkboxes, the wheel, and into the below-the-fold
 key-findings charts, with no clipping or internal scrollbar. Saved as an
 unpublished draft titled "25 years of KEXP Annual Best-Of lists" -- not
 published, since there's no narrative text around it yet.
+
+## About page -- drafted, and a second real-name leak found (2026-09-23)
+
+Wrote a first-pass About page: who's writing this, the name explanation,
+and a general "how the data comes together" section (KEXP's own play/spin
+history, hand-entered Annual list data, MusicBrainz for metadata) --
+verified against `PIPELINE_CURRENT_STATE.md`/`GOVERNANCE_RULES.md` rather
+than guessed (confirmed `list_entries.xlsx` really is hand-curated
+year-to-year, and `fetch_kexp_plays.py` confirms a real KEXP-side fetch
+exists for play history). Deliberately kept post-specific methodology
+(e.g. the tier-cutoff cliff) *out* of this page -- that belongs in the
+wheel post's own narrative text, not a page that's supposed to stay stable
+across every future post.
+
+**A second real-name leak, separate from the Staff-profile byline fixed
+earlier:** Ghost seeds every new site with a default Page ("About this
+site") that was already **published**, and its boilerplate text reads
+"...launched in September 2026 by John Gregson" -- the real name, live on
+the actual site, not just an admin-only field this time. Fixed by
+replacing that page's content with the real About draft and reverting it
+to a private draft (Ghost's "Unpublish and revert to private draft") until
+the contact-method placeholder is filled in for real. Worth remembering:
+Ghost's own onboarding defaults are a second source of real-name exposure
+independent of the Staff profile -- both need checking on any future
+from-scratch Ghost install for this project.
+
+**Editor mechanics worth remembering for future editing sessions:**
+Koenig (Ghost's editor) does not live-convert typed markdown (`**bold**`,
+`## heading`, `- list`) when text is inserted as one bulk paste-like
+operation -- it only triggers on real incremental keystrokes. Typing
+multi-character markdown triggers (`#`, then `#`, then ` `) as separate
+single-character actions works; bolding/italicizing existing text needs an
+actual click-drag mouse selection (keyboard-only selection didn't reveal
+the floating format toolbar in testing) then Ctrl+B/Ctrl+I/Ctrl+K.
