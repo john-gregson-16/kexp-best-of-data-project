@@ -230,6 +230,25 @@ since double-tagging every post with both would mostly repeat the same signal
   anywhere on the site. Covers the whole dataset, not one chart, so it
   shouldn't be repeated per-post; leading idea is a dedicated page linked
   from About and from each data post, not yet committed to.
+
+**Domain and hosting decision, both settled 2026-09-25:**
+- `digmeoutliers.com` registered (Namecheap), ICANN email verified. DNS
+  still unpointed — nothing live there yet, on purpose (holding off until
+  ready).
+- Ghost(Pro) chosen over self-hosted. The trial account created by
+  accident earlier (`https://dig-me-out-liers-and-trends.ghost.io`) is
+  the one being used -- no fresh signup. Casper theme, the real-name
+  fixes (Staff full name/slug, Site title, the default "About this site"
+  page), the About page, and the wheel post (intro + embed + closing)
+  have all been recreated there to match the local instance exactly.
+  Local instance (`D:\DigMeOutliers-Ghost`) still exists too and is kept
+  in sync by hand for now -- not automated, and not yet decided whether
+  it stays around once Ghost(Pro) is the real site.
+- **Not yet done:** converting the Ghost(Pro) trial to a paid plan
+  (owner's own billing action), pointing `digmeoutliers.com`'s DNS at
+  Ghost(Pro) instead of the `.ghost.io` subdomain, and deciding where the
+  Framework chart site (currently on GitHub Pages) sits relative to the
+  real domain -- a subdomain is the leading idea, not committed to.
 - Rollout shape undecided: several topics at launch vs. a single polished
   piece first. Current leaning (2026-09-13 conversation): ship this one
   piece well, with real commentary, rather than spreading thin across
