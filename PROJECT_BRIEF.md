@@ -230,6 +230,15 @@ since double-tagging every post with both would mostly repeat the same signal
   anywhere on the site. Covers the whole dataset, not one chart, so it
   shouldn't be repeated per-post; leading idea is a dedicated page linked
   from About and from each data post, not yet committed to.
+- **About page restructured (2026-09-25/26):** the "how the data comes
+  together" section moved out of About entirely into its own new post,
+  "Where this KEXP data actually comes from" — expanded with the real
+  origin story (the record-store shopping-list line from the Reddit post)
+  and the Annual-then-Special-lists roadmap. About is now just identity/
+  scope/what's-shared, no data mechanics. The name explanation was also
+  trimmed to a single aside, not a justified pun, per owner's steer ("people
+  either get it or they don't"). Both pieces exist as matching drafts on
+  the local instance and the Ghost(Pro) trial.
 
 **Domain and hosting decision, both settled 2026-09-25:**
 - `digmeoutliers.com` registered (Namecheap), ICANN email verified. DNS
