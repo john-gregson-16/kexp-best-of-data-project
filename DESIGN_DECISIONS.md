@@ -1185,3 +1185,50 @@ occurrences" pattern as every previous palette change on this page.
 **Not yet touched:** the Ghost site's own accent color (still Ghost's
 factory-default pink, `#FF1A75`, deliberately left alone per earlier
 sessions) -- a separate, unrelated decision the user is still sitting with.
+
+## Ghost hero cover: a violet-to-teal gradient, pulled from the chart palette (2026-09-26)
+
+**The idea:** rather than leave the Ghost site's hero on Ghost's own
+default pink, or pick some unrelated new color, use the two ends of the
+locked chart palette (violet `#9c57f3`, teal `#58cec8`) as a gradient --
+so the site and the charts visually rhyme without any technical coupling
+between them (Ghost's cover image and the chart's `tierColor` object are
+completely independent; this is a stylistic choice, not a shared
+variable).
+
+**Checked it wasn't a color-theory problem before generating anything:**
+rendered real CSS gradients (both plain sRGB interpolation and an
+explicit-hue-path OKLCH interpolation) for both violet-to-teal and
+violet-to-`#2d6fbe` (the locked tier-4 blue) as an alternative, plus a
+mockup with the actual site title in white text over each, to check for
+contrast dead zones. Both came out clean -- no muddy middle, no readability
+gap anywhere along either gradient.
+
+**Generated as real PNGs, not just CSS swatches**, since Ghost's
+Publication Cover is an uploaded image, not a gradient the accent-color
+picker can produce -- Casper/Source's color setting is single-color only.
+Wrote a small dependency-free Node script (raw PNG encoding via built-in
+`zlib`, no new packages) to produce two 2000x1000 sRGB-interpolated
+gradient images: violet-to-teal and violet-to-blue.
+
+**Hit a real tooling wall getting the file onto the live trial:** browser
+automation cannot set a `<input type="file">`'s value for files picked from
+local disk -- this is a hard, by-design browser security restriction, not
+a workaround-able bug (confirmed via the actual `InvalidStateError` thrown
+when attempting it). Checked whether the user's own Claude-in-Chrome
+extension could do it instead (real browsers can drive native file
+dialogs); it wasn't installed/connected, so this came down to the owner
+uploading both files by hand -- one real limitation worth remembering for
+any future asset-upload task on this project.
+
+**Both candidates tested live on the real trial site, not just as
+isolated swatches** -- owner uploaded each as the actual Publication
+Cover in turn and viewed the real homepage both times before deciding.
+
+**Locked: violet-to-teal.** Owner's own reasoning, echoed back and
+agreed with: it has more range/energy across the gradient, which reads
+closer to "a cool story about KEXP listener trends" than the more
+subdued, single-hue-family violet-to-blue option. Live on the Ghost(Pro)
+trial now. Not yet mirrored to the local Ghost instance -- lower priority
+than content/theme/palette, since it's just a visual asset, not something
+at risk of being lost.
