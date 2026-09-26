@@ -1134,3 +1134,54 @@ worth copying here.
 checkbox toggling updates the summary label and dims/undims the
 corresponding wheel spokes live, Select all / Clear all both work, click-
 outside-to-close and Escape-to-close both work, zero console errors.
+
+## Palette re-locked: warmer gold/teal, blue instead of blue-violet (2026-09-26)
+
+**Trigger:** user's own words, after weeks of "good enough for now" on the
+original palette -- wanted something with "more the vibe I'm going for (not
+an academic paper, but a cool story about KEXP listener trends)," explicitly
+willing to trade some distinctness/colorblind-safety for it. Proposed
+`1: #D6B45B, 2: #58CEC8, 3: #9C57F3 (unchanged), 4: #8694FF`.
+
+**Checked with the same OKLCH method used to lock the original palette, not
+eyeballed.** The real problem the proposal had: the original palette's
+colorblind-safety mechanism is lightness decreasing steadily tier 1→4
+(L = 0.849, 0.747, 0.614, 0.480). The proposed tier 4 (`#8694FF`, L=0.703)
+sat *above* tier 3 (L=0.614), breaking that into a zigzag
+(0.782 → 0.783 → 0.614 → 0.703) -- tier 3 ended up the darkest of all four
+instead of third. Rebuilt the real charts with the proposed hex codes to
+confirm rather than trust the math alone: in the U-shape stacked-bar chart,
+the "10+ albums" segment became nearly invisible against the "3–9 albums"
+violet beneath it -- OKLab distance between those two tiers actually got
+*worse* than the original (0.136 vs. 0.162, already the tightest pair in
+the palette).
+
+**User's steer once shown this: keep the violet exactly as-is ("I really
+like that purple as kind of the anchor... most prominent color of the
+wheel"), only move tier 4.** Searched for a tier-4 replacement at a fixed,
+moderate chroma (~0.14, matching the softer/pastel character of the
+original proposal rather than max-gamut vividness) across hues 255–280°,
+lightness held below tier 3's 0.614 to restore monotonic order. Rendered
+two real candidates live via direct DOM-patching on the built page (not
+just swatches) for a true side-by-side, then as two separate static files
+so the user could open them in their own browser at full size:
+
+- Candidate A `#5765bf` -- closer to the original periwinkle hue (H≈274°),
+  contrast 3.33:1 vs. background, OKLab distance to tier 3 = 0.137.
+- Candidate C `#2d6fbe` -- more hue separation from violet (H≈255°),
+  contrast 3.42:1, OKLab distance to tier 3 = 0.176 (**better separated
+  than the original palette's tier 3/4 pair ever was**).
+
+**Locked: Candidate C.** User's choice, more distinct over more periwinkle-
+adjacent. Final palette: `1: #d6b45b` (gold), `2: #58cec8` (teal),
+`3: #9c57f3` (violet, unchanged), `4: #2d6fbe` (blue). All three changed
+values improve contrast against the `#1a1a19` dark surface versus the
+originals (tier 4 specifically: 2.34:1 → 3.42:1 -- the old blue-violet was
+genuinely under-contrasted, not just less vivid). Applied across all 11
+occurrences (`tierColor`, three separate legend-swatch blocks, and the
+turnover chart's own `color` constant) -- same "five/eleven scattered
+occurrences" pattern as every previous palette change on this page.
+
+**Not yet touched:** the Ghost site's own accent color (still Ghost's
+factory-default pink, `#FF1A75`, deliberately left alone per earlier
+sessions) -- a separate, unrelated decision the user is still sitting with.
