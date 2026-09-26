@@ -1101,3 +1101,36 @@ multi-character markdown triggers (`#`, then `#`, then ` `) as separate
 single-character actions works; bolding/italicizing existing text needs an
 actual click-drag mouse selection (keyboard-only selection didn't reveal
 the floating format toolbar in testing) then Ctrl+B/Ctrl+I/Ctrl+K.
+
+## Year filter: checkbox grid replaced with a dropdown multi-select (2026-09-26)
+
+**User's own complaint:** the always-visible 25-checkbox grid "does what I
+need it to do, but that presentation is a little busy." Wanted a dropdown
+with multi-select and select-all, closer to how filter controls read in
+most dashboard tools.
+
+**What changed:** `yearCheckboxes` → `yearMultiSelect` in
+`annual-circle.md`. Same checkboxes and the same Select all/Clear all
+buttons still exist -- they just live inside a popover now, collapsed
+behind a single toggle button that always shows a plain-language summary
+("All 25 years" / "23 of 25 years" / "No years selected") instead of 25
+boxes taking up permanent vertical space. Interaction contract completely
+unchanged: still `view(...)`-wrapped, still emits a plain array of
+selected year numbers, so nothing downstream (`annualCircle()`'s
+`selected` Set) needed to change.
+
+**Styled to match the page, not the chart:** used `var(--theme-background)`/
+`var(--theme-foreground)`/`var(--theme-foreground-faint)` for the popover
+itself, deliberately *not* the hardcoded dark chart-card colors
+(`#1a1a19`/`#383835`) the artist-search suggestion dropdown already uses
+elsewhere on this page. This control sits in the light prose area above
+the dark wheel card, not inside it, so it should track the page's own
+theme (including automatic dark-mode support) rather than being
+permanently dark regardless of context -- the artist-search dropdown's
+hardcoded-dark choice looks like an earlier inconsistency, not something
+worth copying here.
+
+**Verified interactively, not just built:** toggle open/close, individual
+checkbox toggling updates the summary label and dims/undims the
+corresponding wheel spokes live, Select all / Clear all both work, click-
+outside-to-close and Escape-to-close both work, zero console errors.

@@ -12,7 +12,7 @@ spokes are years with more entries (most years have 91, but 2012 has 120 and
 2024/2025 have 100). Dot color and size both encode the same thing: how many
 distinct albums that artist has had across *all 25 years combined* — darker
 and bigger means a more consistently list-worthy artist over the full
-quarter-century, not just this one year. Use the checkboxes below to
+quarter-century, not just this one year. Use the dropdown below to
 highlight specific years, or search for an artist to see every year they
 made the list.
 
@@ -25,11 +25,24 @@ const years = d3.sort(new Set(rows.map((d) => d.list_year)));
 ```
 
 ```js
-function yearCheckboxes(allYears) {
+function yearMultiSelect(allYears) {
   const container = document.createElement("div");
+  container.style.cssText = "position:relative;max-width:320px;margin:0 0 0.75rem;";
+
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.style.cssText = "width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;padding:8px 10px;border-radius:6px;border:1px solid var(--theme-foreground-faint);background:var(--theme-background);color:var(--theme-foreground);cursor:pointer;";
+  const toggleLabel = document.createElement("span");
+  const caret = document.createElement("span");
+  caret.textContent = "▾";
+  caret.style.cssText = "color:var(--theme-foreground-faint);";
+  toggle.append(toggleLabel, caret);
+
+  const panel = document.createElement("div");
+  panel.style.cssText = "position:absolute;top:100%;left:0;right:0;background:var(--theme-background);border:1px solid var(--theme-foreground-faint);border-radius:8px;margin-top:4px;padding:10px;max-height:280px;overflow-y:auto;z-index:20;display:none;box-shadow:0 4px 16px rgba(0,0,0,0.15);";
 
   const controls = document.createElement("div");
-  controls.style.cssText = "display:flex;gap:8px;margin-bottom:0.4rem;";
+  controls.style.cssText = "display:flex;gap:8px;margin-bottom:0.5rem;";
   const selectAllBtn = document.createElement("button");
   selectAllBtn.type = "button";
   selectAllBtn.textContent = "Select all";
@@ -40,8 +53,8 @@ function yearCheckboxes(allYears) {
   clearAllBtn.style.cssText = selectAllBtn.style.cssText;
   controls.append(selectAllBtn, clearAllBtn);
 
-  const div = document.createElement("div");
-  div.style.cssText = "display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin:0 0 0.75rem;";
+  const grid = document.createElement("div");
+  grid.style.cssText = "display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;";
   const boxes = allYears.map((yr) => {
     const label = document.createElement("label");
     label.style.cssText = "display:flex;align-items:center;gap:4px;cursor:pointer;";
@@ -50,11 +63,12 @@ function yearCheckboxes(allYears) {
     input.checked = true;
     input.value = yr;
     label.append(input, document.createTextNode(String(yr)));
-    div.append(label);
+    grid.append(label);
     return input;
   });
 
-  container.append(controls, div);
+  panel.append(controls, grid);
+  container.append(toggle, panel);
 
   Object.defineProperty(container, "value", {
     get() {
@@ -62,17 +76,45 @@ function yearCheckboxes(allYears) {
     },
   });
 
-  function setAll(checked) {
-    for (const b of boxes) b.checked = checked;
+  function updateLabel() {
+    const n = boxes.filter((b) => b.checked).length;
+    toggleLabel.textContent = n === allYears.length ? `All ${n} years` : n === 0 ? "No years selected" : `${n} of ${allYears.length} years`;
+  }
+
+  function notify() {
+    updateLabel();
     container.dispatchEvent(new Event("input"));
   }
-  selectAllBtn.addEventListener("click", () => setAll(true));
-  clearAllBtn.addEventListener("click", () => setAll(false));
 
+  function setAll(checked) {
+    for (const b of boxes) b.checked = checked;
+    notify();
+  }
+  selectAllBtn.addEventListener("click", setAll.bind(null, true));
+  clearAllBtn.addEventListener("click", setAll.bind(null, false));
+  for (const b of boxes) b.addEventListener("change", notify);
+
+  function open() {
+    panel.style.display = "block";
+    caret.textContent = "▴";
+  }
+  function close() {
+    panel.style.display = "none";
+    caret.textContent = "▾";
+  }
+  toggle.addEventListener("click", () => (panel.style.display === "block" ? close() : open()));
+  document.addEventListener("pointerdown", (event) => {
+    if (!container.contains(event.target)) close();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") close();
+  });
+
+  updateLabel();
   return container;
 }
 
-const selectedYears = view(yearCheckboxes(years));
+const selectedYears = view(yearMultiSelect(years));
 ```
 
 ```js
