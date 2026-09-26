@@ -185,9 +185,13 @@ since double-tagging every post with both would mostly repeat the same signal
   radial "wheel" chart, plus four below-the-fold key-findings charts (cohort
   sizes, year-composition U-shape, rank-vs-familiarity, turnover rate),
   three comeback-gap stat tiles, a searchable-artist feature (search box +
-  release table + wheel highlight), and a year checkbox filter with
-  select-all/clear-all. Color palette locked (gold/teal/violet/blue-violet,
-  see `DESIGN_DECISIONS.md` for the full history of how it got there).
+  release table + wheel highlight), and a year filter -- now a dropdown
+  multi-select (redesigned 2026-09-26 from the original always-visible
+  checkbox grid; same select-all/clear-all, same interaction contract).
+  Color palette **re-locked 2026-09-26**: gold `#d6b45b` / teal `#58cec8` /
+  violet `#9c57f3` (unchanged) / blue `#2d6fbe` -- see `DESIGN_DECISIONS.md`
+  for the full history of how it got there, including both the original
+  lock and this re-lock.
 - Every design decision along the way logged in `DESIGN_DECISIONS.md` —
   that file is the detailed record; this brief stays high-level.
 
@@ -262,3 +266,33 @@ since double-tagging every post with both would mostly repeat the same signal
   piece first. Current leaning (2026-09-13 conversation): ship this one
   piece well, with real commentary, rather than spreading thin across
   several at once — but not finalized.
+
+**Content restructuring (2026-09-25/26):**
+- Wheel post's full narrative text (both the Ghost post's own wrapper prose
+  and the chart's separate internal "Key findings" narrative) exported to
+  `content-drafts/post-25-years-of-kexp-annual-best-of-lists.md` and
+  `content-drafts/chart-25-years-of-kexp-annual-best-of-lists.md` for the
+  owner's own editing pass (committed, not yet edited).
+- Naming question raised and resolved as narrative-only: whether to call
+  these "Best Of" or "Listeners' Favorite" lists. No code/data change:
+  owner plans to add a note about KEXP's own inconsistent list-naming in
+  the overview post, as part of their own editing pass — not yet written.
+
+**Ghost hero cover (2026-09-26):** a violet-to-teal gradient PNG (pulled
+from the two ends of the locked chart palette), uploaded as the Ghost(Pro)
+trial's Publication Cover, replacing Ghost's factory-default pink. Source
+files at `design-assets/cover-violet-teal.png` (locked) and
+`cover-violet-blue.png` (runner-up, kept for reference). Not yet mirrored
+to the local Ghost instance — lower priority than content/theme/palette
+work, since it's a visual asset only. Full color-theory/generation/upload
+story in `DESIGN_DECISIONS.md`.
+
+**Still open, no owner decision yet:**
+- Ghost(Pro) plan tier: Starter/Source vs. Publisher/Casper.
+- A logo/avatar for the site. Owner has a mental concept in progress and
+  shared two style references for the vibe (a loose, hand-drawn white-on-
+  black gestural line-art style, and a bold single-color negative-space
+  silhouette style like the Star Wars Rebel Alliance insignia) — no asset
+  built yet. Confirmed separately: Ghost's avatar/publication-icon fields
+  are theme-agnostic; whether Source specifically renders a logo in its
+  own header is unverified, untested until a real logo file exists.
