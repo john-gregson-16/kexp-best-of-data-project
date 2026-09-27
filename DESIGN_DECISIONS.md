@@ -1232,3 +1232,48 @@ subdued, single-hue-family violet-to-blue option. Live on the Ghost(Pro)
 trial now. Not yet mirrored to the local Ghost instance -- lower priority
 than content/theme/palette, since it's just a visual asset, not something
 at risk of being lost.
+
+## Wheel post renamed: "Best-Of" -> "Listeners' Favorite" (2026-09-27)
+
+**Resolves the naming question first raised 2026-09-25/26** (see
+`PROJECT_BRIEF.md`'s "Content restructuring" section for the fuller
+history): KEXP itself hasn't been consistent about what to call these
+lists, and the owner was weighing "Best Of" against "Listeners' Favorite"
+-- the more accurate framing, since these are listener-voted, not a
+KEXP-editorial pick. Decided narrative-only, no data/tier-cutoff logic
+change.
+
+**Applied everywhere the wheel post's own name appears:**
+`src/annual-circle.md` frontmatter `title`, its H1, and the intro
+sentence's `"Best Albums of the Year"` -> `"Listeners' Favorite Albums of
+the Year"`; the post title and matching intro-paragraph phrase on both the
+Ghost(Pro) trial and the local instance; both content-drafts export files
+(also renamed to match:
+`content-drafts/post-25-years-of-kexp-annual-listeners-favorite-lists.md`,
+`content-drafts/chart-25-years-of-kexp-annual-listeners-favorite-lists.md`).
+
+**Bonus fix caught in the same pass:** the live Ghost post on both
+instances still read "use the checkboxes to isolate specific years" --
+a stale leftover from the 2026-09-26 checkbox-to-dropdown redesign that
+was flagged at the time but never actually applied to the live post text.
+Fixed to "use the dropdown" on both instances while already in the editor
+for the rename.
+
+**Deliberately out of scope, not touched:** the whole-site/repo branding
+(`observablehq.config.js`'s site `title`, `README.md`, `src/index.md`'s
+landing-page H1 -- all still say "KEXP Best Of Data Project") and the
+GitHub repo/Pages URL itself (`kexp-best-of-data-project`, already live
+and referenced by the Ghost post's iframe `src`). Renaming those is a
+bigger decision than a wording pass on one post -- the repo URL change
+alone would need redirects and an iframe-src update -- so left for the
+owner to decide separately rather than folded in here.
+
+**Ghost editor mechanic, worth remembering:** double-clicking a word to
+select it sometimes captured the word cleanly, but on at least one attempt
+silently absorbed the leading letter of a replacement typed right after
+(typing over a selection that started one character later than intended)
+and once dropped a closing quote mark that had been included in the
+selection -- both caught immediately via `get_page_text` right after
+typing, not assumed correct. Read the actual post text back after every
+find-and-replace-by-selection edit in Koenig; don't trust the screenshot
+selection alone.

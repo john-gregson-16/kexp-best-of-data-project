@@ -24,7 +24,7 @@ identity intact.
 Riffs on *Dig Me Out*, the 1997 Sleater-Kinney album — a real favorite of the
 owner's, not a generic pop-culture reference. "Outliers" and "Trends" aren't
 decorative data-flavor words either: they're literally what the KEXP Annual
-Best-Of analysis does (the tier cutoffs were found via outlier-cliff
+Listeners' Favorite analysis does (the tier cutoffs were found via outlier-cliff
 detection; half the below-the-fold charts are trend analysis over 25 years) —
 the two halves of the pun are both true, not just clever.
 
@@ -112,7 +112,8 @@ since double-tagging every post with both would mostly repeat the same signal
 
 - **Heavy / Medium / Light** — the real browsable taxonomy, prominent in
   navigation. Mirrors KEXP's own rotation-tier concept directly: Heavy = the
-  flagship deep-dive pieces (e.g. the KEXP Annual Best-Of analysis), Medium =
+  flagship deep-dive pieces (e.g. the KEXP Annual Listeners' Favorite
+  analysis), Medium =
   regular takes/reviews/concert write-ups, Light = short asides, pop-culture
   tangents, anything not needing the full treatment. This is *editorial
   weight*, not length.
@@ -181,8 +182,10 @@ since double-tagging every post with both would mostly repeat the same signal
 
 **Built and working, this repo:**
 - Full Observable Framework scaffold, Node installed, dev server running.
-- First visual live at `src/annual-circle.md`: the 25-year Annual Best-Of
-  radial "wheel" chart, plus four below-the-fold key-findings charts (cohort
+- First visual live at `src/annual-circle.md`: the 25-year Annual
+  Listeners' Favorite radial "wheel" chart (renamed from "Best-Of"
+  2026-09-27, see naming note below), plus four below-the-fold
+  key-findings charts (cohort
   sizes, year-composition U-shape, rank-vs-familiarity, turnover rate),
   three comeback-gap stat tiles, a searchable-artist feature (search box +
   release table + wheel highlight), and a year filter -- now a dropdown
@@ -276,13 +279,26 @@ since double-tagging every post with both would mostly repeat the same signal
 **Content restructuring (2026-09-25/26):**
 - Wheel post's full narrative text (both the Ghost post's own wrapper prose
   and the chart's separate internal "Key findings" narrative) exported to
-  `content-drafts/post-25-years-of-kexp-annual-best-of-lists.md` and
-  `content-drafts/chart-25-years-of-kexp-annual-best-of-lists.md` for the
-  owner's own editing pass (committed, not yet edited).
-- Naming question raised and resolved as narrative-only: whether to call
-  these "Best Of" or "Listeners' Favorite" lists. No code/data change:
-  owner plans to add a note about KEXP's own inconsistent list-naming in
-  the overview post, as part of their own editing pass — not yet written.
+  `content-drafts/post-25-years-of-kexp-annual-listeners-favorite-lists.md`
+  and `content-drafts/chart-25-years-of-kexp-annual-listeners-favorite-lists.md`
+  (renamed 2026-09-27 to match the naming decision below) for the owner's
+  own editing pass.
+- Naming question raised 2026-09-25/26: whether to call these "Best Of" or
+  "Listeners' Favorite" lists. **Decided 2026-09-27: "Listeners' Favorite."**
+  Narrative-only, no code/data change. Applied everywhere the wheel post's
+  own name appears: `src/annual-circle.md` (frontmatter title, H1, intro
+  sentence), the post title + intro paragraph on both Ghost instances (also
+  caught and fixed a stale "use the checkboxes" reference left over from the
+  2026-09-26 dropdown redesign while in there), and both content-drafts
+  export files. **Not yet touched, deliberately out of scope for this
+  pass:** the whole-site/repo branding still says "KEXP Best Of Data
+  Project" (`observablehq.config.js`'s `title`, `README.md`, `src/index.md`
+  landing page H1) and the GitHub repo/Pages URL itself
+  (`kexp-best-of-data-project`) -- renaming those is a bigger, separate
+  decision (the URL is already live and embedded in the Ghost iframe), not
+  something to fold into a wheel-post text pass. Owner still plans to add a
+  note about KEXP's own inconsistent list-naming in the overview post, as
+  part of their own editing pass — not yet written.
 
 **Ghost hero cover (2026-09-26):** a violet-to-teal gradient PNG (pulled
 from the two ends of the locked chart palette), uploaded as the Ghost(Pro)

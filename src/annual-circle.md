@@ -1,12 +1,12 @@
 ---
-title: 25 years of KEXP Annual Best-Of lists
+title: 25 years of KEXP Annual Listeners' Favorite lists
 toc: false
 head: '<link rel="icon" href="observable.png" type="image/png" sizes="32x32"><script src="https://cdn.jsdelivr.net/npm/iframe-resizer@5.5.9/js/iframeResizer.contentWindow.min.js"></script>'
 ---
 
-# 25 years of KEXP Annual Best-Of lists
+# 25 years of KEXP Annual Listeners' Favorite lists
 
-Each spoke is one year of KEXP's Annual "Best Albums of the Year" list, 2001
+Each spoke is one year of KEXP's Annual "Listeners' Favorite Albums of the Year" list, 2001
 (top, running clockwise) through 2025. Rank 1 sits nearest the center; longer
 spokes are years with more entries (most years have 91, but 2012 has 120 and
 2024/2025 have 100). Dot color and size both encode the same thing: how many

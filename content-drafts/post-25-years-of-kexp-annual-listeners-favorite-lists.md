@@ -1,7 +1,7 @@
-# 25 years of KEXP Annual Best-Of lists
+# 25 years of KEXP Annual Listeners' Favorite lists
 
-In 25 years of KEXP's listener-voted Annual "Best Albums of the Year"
-lists, exactly three artists have ever landed ten or more albums on one:
+In 25 years of KEXP's listener-voted Annual "Listeners' Favorite Albums of
+the Year" lists, exactly three artists have ever landed ten or more albums on one:
 King Gizzard & the Lizard Wizard, Wilco, and The Decemberists. Not top ten,
 not top five — three, total, in a quarter-century, out of every artist
 who's ever made a list.

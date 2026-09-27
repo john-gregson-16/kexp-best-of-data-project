@@ -1,5 +1,6 @@
 <!--
-This is the OTHER half of the "25 years of KEXP Annual Best-Of lists"
+This is the OTHER half of the "25 years of KEXP Annual Listeners' Favorite
+lists"
 reading experience -- the narrative that lives INSIDE the interactive
 chart itself (src/annual-circle.md), not in the Ghost post. The Ghost post
 (sent separately) only has the intro/closing wrapper text; everything
@@ -13,9 +14,9 @@ shown are today's real values, included so you can see what the sentence
 actually says, but they're computed, not something to hand-edit in place.
 -->
 
-# 25 years of KEXP Annual Best-Of lists
+# 25 years of KEXP Annual Listeners' Favorite lists
 
-Each spoke is one year of KEXP's Annual "Best Albums of the Year" list, 2001
+Each spoke is one year of KEXP's Annual "Listeners' Favorite Albums of the Year" list, 2001
 (top, running clockwise) through 2025. Rank 1 sits nearest the center; longer
 spokes are years with more entries (most years have 91, but 2012 has 120 and
 2024/2025 have 100). Dot color and size both encode the same thing: how many
