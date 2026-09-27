@@ -20,6 +20,11 @@ quarter-century, not just this one year. Use the dropdown above the chart to
 highlight specific years, or search for an artist to see every year they
 made the list.
 
+<div style="border-left:3px solid #58cec8; padding:0.85rem 1.25rem; margin:1.25rem 0;">
+  <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:var(--theme-foreground-faint); margin-bottom:0.4rem;">Author's note</div>
+  <div style="font-size:15px; line-height:1.6; color:var(--theme-foreground-muted);">KEXP itself has gone back and forth between &ldquo;Best Of&rdquo; and &ldquo;Listeners&rsquo; Favorite&rdquo; over the years. I&rsquo;m going with Listeners&rsquo; Favorite here &mdash; it&rsquo;s more consistent, and it better fits the spirit of what I&rsquo;m analyzing and presenting.</div>
+</div>
+
 ```js
 const rows = FileAttachment("data/annual_circle_2001_2025.csv").csv({typed: true});
 ```
