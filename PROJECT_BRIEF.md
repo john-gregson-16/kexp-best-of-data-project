@@ -243,6 +243,12 @@ since double-tagging every post with both would mostly repeat the same signal
   trimmed to a single aside, not a justified pun, per owner's steer ("people
   either get it or they don't"). Both pieces exist as matching drafts on
   the local instance and the Ghost(Pro) trial.
+- **About page body text finalized (2026-09-27):** owner rewrote the page
+  (identity/tone intro, no-ads/no-sponsorship line, the "what's shared and
+  what isn't" data-sharing paragraph) and it's now synced word-for-word on
+  both the local instance and the Ghost(Pro) trial, still as an unpublished
+  Draft. Only remaining gap on this page: "Get in touch" is still a
+  placeholder pending the contact-method decision (see below).
 
 **Domain and hosting decision, both settled 2026-09-25:**
 - `digmeoutliers.com` registered (Namecheap), ICANN email verified. DNS
@@ -288,11 +294,21 @@ work, since it's a visual asset only. Full color-theory/generation/upload
 story in `DESIGN_DECISIONS.md`.
 
 **Still open, no owner decision yet:**
-- Ghost(Pro) plan tier: Starter/Source vs. Publisher/Casper.
-- A logo/avatar for the site. Owner has a mental concept in progress and
-  shared two style references for the vibe (a loose, hand-drawn white-on-
-  black gestural line-art style, and a bold single-color negative-space
-  silhouette style like the Star Wars Rebel Alliance insignia) — no asset
-  built yet. Confirmed separately: Ghost's avatar/publication-icon fields
-  are theme-agnostic; whether Source specifically renders a logo in its
-  own header is unverified, untested until a real logo file exists.
+- Ghost(Pro) plan tier: Starter/Source vs. Publisher/Casper. (Trial's
+  active theme is currently Casper either way -- Typography's "Theme
+  default" setting will auto-follow whichever theme ends up active, no
+  manual migration needed when this gets decided.)
+- Contact method for the About page's "Get in touch" section -- still a
+  placeholder, the one unfinished piece of otherwise-finalized About copy
+  (see below).
+- A logo. Concept as of 2026-09-27: a shovel blended into a Gibson-SG-style
+  guitar headstock (riffs on "dig" + Carrie Brownstein/Sleater-Kinney's
+  usual guitar), inside a circle badge -- no line-chart/data motif, kept
+  deliberately simple. No asset built yet. Confirmed directly in both
+  themes' own header code (`{{#if @site.logo}}`): a Publication logo
+  replaces the site-title text, it doesn't sit alongside it -- if both are
+  wanted together, the wordmark needs to be baked into the logo image
+  itself. Publication icon is a separate field (small square, favicon +
+  Source's sidebar "about" avatar only, invisible on Casper) -- tested live
+  by uploading one of two placeholder style references there, confirmed
+  working correctly.
