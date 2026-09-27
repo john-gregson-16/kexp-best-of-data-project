@@ -298,9 +298,19 @@ story in `DESIGN_DECISIONS.md`.
   active theme is currently Casper either way -- Typography's "Theme
   default" setting will auto-follow whichever theme ends up active, no
   manual migration needed when this gets decided.)
-- Contact method for the About page's "Get in touch" section -- still a
-  placeholder, the one unfinished piece of otherwise-finalized About copy
-  (see below).
+- Contact method for the About page's "Get in touch" section -- **decided
+  2026-09-27: deliberately deferred, not unresolved.** Owner's existing
+  daily-checked inbox (msn.com) has their real name as the address's local
+  part, so publishing it would break the identity firewall this whole
+  project has maintained (same category of risk as the two real-name leaks
+  Ghost's own defaults caused earlier). The already-set-up name-free
+  dedicated Gmail was one live option (as-is, or with auto-forwarding into
+  msn.com so replies aren't missed), but owner chose to wait instead and
+  use `hello@digmeoutliers.com` once the domain's DNS/email hosting is
+  sorted -- the most on-brand answer, just blocked on decisions already
+  being deliberately held off (see "Domain and hosting decision" above).
+  Placeholder text in the About draft stays as-is until then; not a bug,
+  don't "fix" it without this context.
 - A logo. Concept as of 2026-09-27: a shovel blended into a Gibson-SG-style
   guitar headstock (riffs on "dig" + Carrie Brownstein/Sleater-Kinney's
   usual guitar), inside a circle badge -- no line-chart/data motif, kept
