@@ -14,15 +14,19 @@ shown are today's real values, included so you can see what the sentence
 actually says, but they're computed, not something to hand-edit in place.
 -->
 
-# 25 years of KEXP Annual Listeners' Favorite lists
+# 25 years of KEXP annual Listeners' Favorite lists
 
-Each spoke is one year of KEXP's Annual "Listeners' Favorite Albums of the Year" list, 2001
+As an introduction to the project, we'll start with the lists themselves.
+What's in them, what kinds of trends have we seen over the years, movers
+and shakers. Stuff like that.
+
+Each spoke is one year of KEXP's Annual "Favorite Albums of the Year" list, 2001
 (top, running clockwise) through 2025. Rank 1 sits nearest the center; longer
 spokes are years with more entries (most years have 91, but 2012 has 120 and
 2024/2025 have 100). Dot color and size both encode the same thing: how many
 distinct albums that artist has had across *all 25 years combined* — darker
 and bigger means a more consistently list-worthy artist over the full
-quarter-century, not just this one year. Use the dropdown below to
+quarter-century, not just this one year. Use the dropdown above the chart to
 highlight specific years, or search for an artist to see every year they
 made the list.
 
@@ -61,31 +65,32 @@ it's a **U-shape**. The "1 album" share is highest right at both edges of
 the 25-year window (2001–2004 and 2024–2025, each above 30%) and lowest in
 the middle stretch (down near 12–14% around 2008, 2017, and 2019–2020).
 
-That matches a real, well-known effect from cohort analysis, just cutting
+That matches a real, well-known effect from cohort analysis, cutting
 both ways rather than one: near **2001**, any artist whose prolific run was
 already mostly behind them before the list existed gets none of that
 earlier history counted — a **left-truncation** effect. Near **2025**, a
 brand-new artist simply hasn't had the calendar time yet to earn a second
 appearance — the mirror-image **right-censoring** effect. An artist who
 happened to arrive mid-window, by contrast, had room on both sides to build
-a track record. The instinct that the window's edges distort the count was
-right — it just distorts *both* ends, not only the start.
+a track record.
 
 ### Is the top of the list reserved for familiar names?
 
-The tier used above is a 25-year *total* — it already knows about albums an
+The tiering used above is a 25-year *total* — it includes albums an
 artist hadn't released yet at the time of a given appearance. That's fine
-for "how prolific did this artist turn out to be," but it's the wrong
-measure for "was this artist already known *at the time* they got this
-rank" — an artist's first-ever appearance would get credit for albums still
-years in their future. So this chart uses a different count: how many times
-this artist had appeared on an Annual list **up to and including this one**
-— nothing about album chronology, just this list's own history, kept
-separate from the artist-discography-order analysis planned for later.
+for "how prolific did this artist turn out to be in the 25-year window,"
+but it's the wrong measure for "was this artist already known *at the
+time* they got this rank" — an artist's first-ever appearance would get
+credit for albums still years in their future. So this chart uses a
+different count: how many times this artist had appeared on an Annual
+list **up to and including this one**. For example, the wheel shows
+Sleater-Kinney in the 3–9 tier, with 6 albums across the full 25-year
+span. But their 2005 album *The Woods* was only their second Annual-list
+appearance up to that point — this chart is what shows that distinction.
 
 [CHART — rank band vs. appearance number]
 
-The gradient is real but softer than it first looked: first-timers make up
+The gradient is real but softer than it looked in the original view: first-timers make up
 25.6% of rank 1–5 entries, climbing steadily to 54.1% by rank 51 and
 below. The top of the list does skew toward familiar names — just not as
 absolutely as counting every artist's eventual career total implied. One
@@ -93,6 +98,24 @@ specific number worth sitting with: of the 25 albums that have ever hit
 **#1**, 7 of them (28%) were that artist's first-ever appearance on an
 Annual list. Debuting at the top isn't rare — those artists just tend to
 come back.
+
+### How consistent are the artists who keep coming back?
+
+Appearing on the list once says something about an artist. Appearing
+several times says something else — how *reliably* an artist keeps
+landing in listeners' favor, or how much their standing swings from one
+appearance to the next.
+
+[STAT TILES — three tiles, all **[DYNAMIC]**, current real values below:]
+
+- **Artists with 4+ appearances, always in the top 15**: "6 artists" —
+  "Arcade Fire, TV on the Radio, The White Stripes, Fleet Foxes, IDLES,
+  and Fontaines D.C. have never once fallen out of the top 15."
+- **Steadiest repeat artist**: "IDLES" — "4 appearances, ranked #2–#4
+  every time — the tightest spread of any repeat artist."
+- **Biggest career-long swings (5+ appearances)**: "Yeah Yeah Yeahs" —
+  "From #91 to #2 and back, across 7 appearances. Band of Horses shows
+  the same pattern."
 
 ### How much of each year's list is brand new?
 
@@ -112,6 +135,11 @@ list *matures* over its first decade as a growing pool of past artists
 becomes available to return, then settles into a steady state where
 roughly a third of any given year's list is a name that's never appeared
 before — not shrinking further, just holding.
+
+This lines up with KEXP's own mission of championing music discovery.
+Listeners clearly develop favorites and keep voting for their latest
+releases, but the community still devotes roughly a third of its annual
+ten-album ballot to artists it's never voted for before.
 
 ### When artists come back, how long is the wait?
 

@@ -1,18 +1,22 @@
 ---
-title: 25 years of KEXP Annual Listeners' Favorite lists
+title: 25 years of KEXP annual Listeners' Favorite lists
 toc: false
 head: '<link rel="icon" href="observable.png" type="image/png" sizes="32x32"><script src="https://cdn.jsdelivr.net/npm/iframe-resizer@5.5.9/js/iframeResizer.contentWindow.min.js"></script>'
 ---
 
-# 25 years of KEXP Annual Listeners' Favorite lists
+# 25 years of KEXP annual Listeners' Favorite lists
 
-Each spoke is one year of KEXP's Annual "Listeners' Favorite Albums of the Year" list, 2001
+As an introduction to the project, we'll start with the lists themselves.
+What's in them, what kinds of trends have we seen over the years, movers
+and shakers. Stuff like that.
+
+Each spoke is one year of KEXP's Annual "Favorite Albums of the Year" list, 2001
 (top, running clockwise) through 2025. Rank 1 sits nearest the center; longer
 spokes are years with more entries (most years have 91, but 2012 has 120 and
 2024/2025 have 100). Dot color and size both encode the same thing: how many
 distinct albums that artist has had across *all 25 years combined* — darker
 and bigger means a more consistently list-worthy artist over the full
-quarter-century, not just this one year. Use the dropdown below to
+quarter-century, not just this one year. Use the dropdown above the chart to
 highlight specific years, or search for an artist to see every year they
 made the list.
 
@@ -717,27 +721,29 @@ the 25-year window (2001&ndash;2004 and 2024&ndash;2025, each above 30%) and
 lowest in the middle stretch (down near 12&ndash;14% around 2008, 2017, and
 2019&ndash;2020).
 
-That matches a real, well-known effect from cohort analysis, just cutting
+That matches a real, well-known effect from cohort analysis, cutting
 both ways rather than one: near **2001**, any artist whose prolific run was
 already mostly behind them before the list existed gets none of that
 earlier history counted — a **left-truncation** effect. Near **2025**, a
 brand-new artist simply hasn't had the calendar time yet to earn a second
 appearance — the mirror-image **right-censoring** effect. An artist who
 happened to arrive mid-window, by contrast, had room on both sides to build
-a track record. The instinct that the window's edges distort the count was
-right — it just distorts *both* ends, not only the start.
+a track record.
 
 ### Is the top of the list reserved for familiar names?
 
-The tier used above is a 25-year *total* — it already knows about albums an
+The tiering used above is a 25-year *total* — it includes albums an
 artist hadn't released yet at the time of a given appearance. That's fine
-for "how prolific did this artist turn out to be," but it's the wrong
-measure for "was this artist already known *at the time* they got this
-rank" — an artist's first-ever appearance would get credit for albums still
-years in their future. So this chart uses a different count: how many times
-this artist had appeared on an Annual list **up to and including this one**
-— nothing about album chronology, just this list's own history, kept
-separate from the artist-discography-order analysis planned for later.
+for "how prolific did this artist turn out to be in the 25-year window,"
+but it's the wrong measure for "was this artist already known *at the
+time* they got this rank" — an artist's first-ever appearance would get
+credit for albums still years in their future. So this chart uses a
+different count: how many times this artist had appeared on an Annual
+list **up to and including this one**. For example, the wheel shows
+Sleater-Kinney in the 3&ndash;9 tier, with 6 albums across the full
+25-year span. But their 2005 album *The Woods* was only their second
+Annual-list appearance up to that point — this chart is what shows that
+distinction.
 
 ```js
 const asOfBucketed = (() => {
@@ -893,7 +899,7 @@ rankTrendChart(rankBandStats)
 
 </div>
 
-The gradient is real but softer than it first looked: first-timers make up
+The gradient is real but softer than it looked in the original view: first-timers make up
 25.6% of rank 1&ndash;5 entries, climbing steadily to 54.1% by rank 51 and
 below. The top of the list does skew toward familiar names — just not as
 absolutely as counting every artist's eventual career total implied. One
@@ -901,6 +907,115 @@ specific number worth sitting with: of the 25 albums that have ever hit
 **#1**, 7 of them (28%) were that artist's first-ever appearance on an
 Annual list. Debuting at the top isn't rare — those artists just tend to
 come back.
+
+### How consistent are the artists who keep coming back?
+
+Appearing on the list once says something about an artist. Appearing
+several times says something else — how *reliably* an artist keeps
+landing in listeners' favor, or how much their standing swings from one
+appearance to the next.
+
+```js
+const consistencyStats = (() => {
+  const byArtist = new Map();
+  for (const d of rows) {
+    if (!byArtist.has(d.artist_id)) byArtist.set(d.artist_id, {name: d.artist_name, appearances: []});
+    byArtist.get(d.artist_id).appearances.push({year: d.list_year, rank: d.rank, listSize: d.list_size});
+  }
+  for (const info of byArtist.values()) info.appearances.sort((a, b) => a.year - b.year);
+
+  const clockwork = [...byArtist.values()]
+    .filter((a) => a.appearances.length >= 4 && a.appearances.every((x) => x.rank <= 15))
+    .sort((a, b) => b.appearances.length - a.appearances.length);
+
+  function stdevPercentile(appearances) {
+    const pcts = appearances.map((x) => x.rank / x.listSize);
+    const mean = pcts.reduce((a, b) => a + b, 0) / pcts.length;
+    return Math.sqrt(pcts.reduce((a, b) => a + (b - mean) ** 2, 0) / pcts.length);
+  }
+
+  const threePlus = [...byArtist.values()]
+    .filter((a) => a.appearances.length >= 3)
+    .map((a) => ({name: a.name, appearances: a.appearances, sd: stdevPercentile(a.appearances)}));
+
+  const steadiest = [...threePlus].sort((a, b) => a.sd - b.sd)[0];
+  const biggestSwings = threePlus.filter((a) => a.appearances.length >= 5).sort((a, b) => b.sd - a.sd);
+
+  return {clockwork, steadiest, biggestSwings};
+})();
+```
+
+```js
+function consistencyStatTiles(stats) {
+  function namesJoined(list) {
+    const names = list.map((a) => a.name);
+    if (names.length <= 1) return names.join("");
+    return `${names.slice(0, -1).join(", ")}, and ${names[names.length - 1]}`;
+  }
+  function rankRange(appearances) {
+    const ranks = appearances.map((a) => a.rank);
+    return [Math.min(...ranks), Math.max(...ranks)];
+  }
+
+  const top = stats.clockwork;
+  const steady = stats.steadiest;
+  const [steadyBest, steadyWorst] = rankRange(steady.appearances);
+  const swing1 = stats.biggestSwings[0];
+  const swing2 = stats.biggestSwings[1];
+  const [swing1Best, swing1Worst] = rankRange(swing1.appearances);
+
+  const tileDefs = [
+    {
+      label: "Artists with 4+ appearances, always in the top 15",
+      value: `${top.length} artists`,
+      caption: `${namesJoined(top)} have never once fallen out of the top 15.`,
+    },
+    {
+      label: "Steadiest repeat artist",
+      value: steady.name,
+      caption: `${steady.appearances.length} appearances, ranked #${steadyBest}–#${steadyWorst} every time — the tightest spread of any repeat artist.`,
+    },
+    {
+      label: "Biggest career-long swings (5+ appearances)",
+      value: swing1.name,
+      caption: `From #${swing1Worst} to #${swing1Best} and back, across ${swing1.appearances.length} appearances. ${swing2.name} shows the same pattern.`,
+    },
+  ];
+
+  const wrap = document.createElement("div");
+  wrap.style.cssText = "display:flex;flex-wrap:wrap;";
+
+  tileDefs.forEach((t, i) => {
+    const tile = document.createElement("div");
+    tile.style.cssText = `flex:1 1 220px;padding:0 1.5rem;${i > 0 ? "border-left:1px solid #33322f;" : ""}`;
+
+    const label = document.createElement("div");
+    label.style.cssText = "color:#898781;font-size:12px;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.5rem;";
+    label.textContent = t.label;
+
+    const value = document.createElement("div");
+    value.style.cssText = "color:#f0efec;font-size:32px;font-weight:600;font-family:var(--sans-serif);line-height:1.1;";
+    value.textContent = t.value;
+
+    const caption = document.createElement("div");
+    caption.style.cssText = "color:#c9c8c3;font-size:13px;margin-top:0.6rem;line-height:1.4;";
+    caption.textContent = t.caption;
+
+    tile.append(label, value, caption);
+    wrap.append(tile);
+  });
+
+  return wrap;
+}
+```
+
+<div class="card" style="background:#1a1a19;padding:1.75rem 1.5rem;max-width:920px;margin:0 auto;">
+
+```js
+consistencyStatTiles(consistencyStats)
+```
+
+</div>
 
 ### How much of each year's list is brand new?
 
@@ -1027,6 +1142,11 @@ list *matures* over its first decade as a growing pool of past artists
 becomes available to return, then settles into a steady state where
 roughly a third of any given year's list is a name that's never appeared
 before — not shrinking further, just holding.
+
+This lines up with KEXP's own mission of championing music discovery.
+Listeners clearly develop favorites and keep voting for their latest
+releases, but the community still devotes roughly a third of its annual
+ten-album ballot to artists it's never voted for before.
 
 ### When artists come back, how long is the wait?
 
