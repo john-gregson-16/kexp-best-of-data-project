@@ -967,7 +967,7 @@ function consistencyStatTiles(stats) {
   const [steadyBest, steadyWorst] = rankRange(steady.appearances);
   const swing1 = stats.biggestSwings[0];
   const swing2 = stats.biggestSwings[1];
-  const [swing1Best, swing1Worst] = rankRange(swing1.appearances);
+  const swing1Sequence = swing1.appearances.map((a) => `#${a.rank}`).join(" → ");
 
   const tileDefs = [
     {
@@ -981,9 +981,9 @@ function consistencyStatTiles(stats) {
       caption: `${steady.appearances.length} appearances, ranked #${steadyBest}–#${steadyWorst} every time — the tightest spread of any repeat artist.`,
     },
     {
-      label: "Biggest career-long swings (5+ appearances)",
+      label: "Least predictable ranking (5+ appearances)",
       value: swing1.name,
-      caption: `From #${swing1Worst} to #${swing1Best} and back, across ${swing1.appearances.length} appearances. ${swing2.name} shows the same pattern.`,
+      caption: `${swing1Sequence} across ${swing1.appearances.length} appearances — the widest rank swings of anyone with 5+ trips to the list. ${swing2.name} shows the same pattern.`,
     },
   ];
 
@@ -1014,7 +1014,7 @@ function consistencyStatTiles(stats) {
 }
 ```
 
-<div class="card" style="background:#1a1a19;padding:1.75rem 1.5rem;max-width:920px;margin:0 auto;">
+<div class="card" style="background:#1a1a19;padding:1.75rem 1.5rem;max-width:920px;margin:0 auto 2rem;">
 
 ```js
 consistencyStatTiles(consistencyStats)
