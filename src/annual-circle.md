@@ -505,7 +505,7 @@ artistTable(selectedArtist, rows)
 
 ## Key findings
 
-The wheel above shows every entry from every list. The two charts below pull
+The wheel above shows every entry from every list. The charts below pull
 back to ask what those entries add up to.
 
 ### How rare is a repeat appearance?
@@ -598,6 +598,13 @@ You'd expect an artist's tier to just reflect how good and prolific they
 are. But the tier is a 25-year *total*, and the 25-year window itself has
 edges — so an artist's odds of reaching a high tier also depend on how much
 of that window they had to work with.
+
+Take Wet Leg: their self-titled debut hit #1 in 2022, and their follow-up,
+*moisturizer*, hit #1 again in 2025. Both appearances land in the "2
+albums" (teal) segment below — not "1 album" — because the tier reflects
+an artist's full 25-year total, applied identically to every one of their
+appearances, not just how many albums they'd released by that particular
+year.
 
 ```js
 const yearStats = years.map((yr) => {
