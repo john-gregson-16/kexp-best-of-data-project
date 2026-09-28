@@ -1,7 +1,7 @@
 ---
 title: 25 years of KEXP annual Listeners' Favorite lists
 toc: false
-head: '<link rel="icon" href="observable.png" type="image/png" sizes="32x32"><script src="https://cdn.jsdelivr.net/npm/iframe-resizer@5.5.9/js/iframeResizer.contentWindow.min.js"></script>'
+head: '<link rel="icon" href="observable.png" type="image/png" sizes="32x32"><script src="https://cdn.jsdelivr.net/npm/iframe-resizer@5.5.9/js/iframeResizer.contentWindow.min.js"></script><style>p, table, figure, figcaption, h1, h2, h3, h4, h5, h6, .katex-display { max-width: 920px; }</style>'
 ---
 
 # 25 years of KEXP annual Listeners' Favorite lists
