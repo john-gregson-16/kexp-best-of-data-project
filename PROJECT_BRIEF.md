@@ -296,9 +296,21 @@ since double-tagging every post with both would mostly repeat the same signal
   landing page H1) and the GitHub repo/Pages URL itself
   (`kexp-best-of-data-project`) -- renaming those is a bigger, separate
   decision (the URL is already live and embedded in the Ghost iframe), not
-  something to fold into a wheel-post text pass. Owner still plans to add a
-  note about KEXP's own inconsistent list-naming in the overview post, as
-  part of their own editing pass — not yet written.
+  something to fold into a wheel-post text pass.
+- **Overview post fully rewritten and pushed live, 2026-09-27** (retitled
+  "KEXP listeners' favorite albums data project," was "Where this KEXP
+  data actually comes from"): the real origin story (record-store
+  shopping-list line), the Annual-then-Fall-Drive roadmap, a naming-note
+  paragraph on KEXP's own inconsistent list naming (researched via the
+  Wayback Machine -- see `DESIGN_DECISIONS.md` for the sourced history:
+  "Top 903 Albums" -> "Year-End Poll" -> "Top Albums" -> "Best of/Best
+  Albums of [Year]," sometimes both live at once), the three-source
+  breakdown, the editorial-judgment paragraph, and the no-vote-counts
+  caveat (owner confirmed the "10 albums" ballot size is accurate, not
+  assumed). Synced word-for-word on both Ghost instances. The closing
+  sentence names the wheel post but isn't yet a real hyperlink -- Ghost's
+  internal link picker only surfaces **published** posts, and both posts
+  are still drafts; link it via Ctrl+K once either post is published.
 
 **Ghost hero cover (2026-09-26):** a violet-to-teal gradient PNG (pulled
 from the two ends of the locked chart palette), uploaded as the Ghost(Pro)
