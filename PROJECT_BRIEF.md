@@ -346,6 +346,17 @@ since double-tagging every post with both would mostly repeat the same signal
   unlinked, same reason as the wheel-post reference above (Ghost's link
   picker won't surface the still-draft About page either; link once
   either page is published).
+- **Wheel post now references Data Notes (2026-09-28):** appended a
+  sentence to the existing "Author's note" callout in
+  `src/annual-circle.md` ("These lists also go through some manual
+  reconciliation before they end up here -- see the Data Notes page..."),
+  mirrored in the matching content-drafts export. Left as plain text, not
+  a real link -- this one's a two-part blocker, not just "wait for
+  publish": the chart is hosted on GitHub Pages and Data Notes lives on
+  Ghost, a different domain, so it needs an absolute URL, and which Ghost
+  domain (the `.ghost.io` trial vs. a future `digmeoutliers.com`) is
+  itself still undecided. Fill in the real `<a href>` once both the page
+  is published and the domain question is settled.
 
 **Ghost hero cover (2026-09-26):** a violet-to-teal gradient PNG (pulled
 from the two ends of the locked chart palette), uploaded as the Ghost(Pro)

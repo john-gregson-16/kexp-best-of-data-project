@@ -34,7 +34,9 @@ made the list.
 > KEXP itself has gone back and forth between "Best Of" and "Listeners'
 > Favorite" over the years. I'm going with Listeners' Favorite here — it's
 > more consistent, and it better fits the spirit of what I'm analyzing and
-> presenting.
+> presenting. These lists also go through some manual reconciliation
+> before they end up here — see the Data Notes page for where I've made
+> corrections or judgment calls.
 
 [THE WHEEL CHART — interactive, with a Legend: 1 album / 2 albums /
 3–9 albums / 10+ albums]
