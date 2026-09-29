@@ -312,6 +312,41 @@ since double-tagging every post with both would mostly repeat the same signal
   internal link picker only surfaces **published** posts, and both posts
   are still drafts; link it via Ctrl+K once either post is published.
 
+- **New "Data Notes" page, built and pushed live, 2026-09-28** (a Ghost
+  Page, same structural tier as About): consolidates list-curation
+  transparency in one place instead of repeating it per-post. Built from
+  `content-drafts/sources-and-curation-notes.md`'s raw material, but
+  substantially re-scoped for this page's actual audience/purpose rather
+  than ported verbatim -- that file originally accompanied a shared Excel
+  sheet, not this site. Key changes from the source material: naming
+  conventions section collapsed to a single paragraph (owner now pulls
+  artist/album names straight from MusicBrainz by artist ID, no manual
+  normalization of their own); every item tied to a not-yet-covered
+  special/Fall-Drive list (Top 903, 21st Century, Top 666, 50 Years, All
+  Time) removed until those lists get their own analysis; the
+  *MassEducation* item dropped entirely (owner confirmed on reflection
+  it's not actually ambiguous -- St. Vincent has two genuinely distinct
+  2017/2018 releases, not a same-title collision needing disambiguation).
+  Structured as two explicitly separate sections per the owner's own
+  framing: "Corrections -- what I believe to be real KEXP errors" vs.
+  "Curation calls -- my own judgment on ambiguous entries," so readers
+  (and any future KEXP staff who find the site) aren't left guessing which
+  kind of note they're looking at.
+  **One new corrections entry, verified against the real CSV, not just
+  recalled:** four albums each appear on two different Annual lists a year
+  apart, at a notably better rank the second time -- Elbow's *Cast of
+  Thousands* (2003 #71 -> 2004 #39), Vampire Weekend's debut (2007 #22 ->
+  2008 #2), The Head and the Heart's debut (2010 #16 -> 2011 #4), Of
+  Monsters and Men's *My Head Is an Animal* (2011 #16 -> 2012 #10). Owner's
+  own theory, included in the page copy: KEXP likely re-added a late-year
+  release to the next year's ballot (maybe unknowingly), and voters had no
+  reason to know or care it had technically already had its turn.
+  **Also added:** a closing invitation for KEXP itself (or anyone with
+  better information) to submit corrections via "contact me" -- currently
+  unlinked, same reason as the wheel-post reference above (Ghost's link
+  picker won't surface the still-draft About page either; link once
+  either page is published).
+
 **Ghost hero cover (2026-09-26):** a violet-to-teal gradient PNG (pulled
 from the two ends of the locked chart palette), uploaded as the Ghost(Pro)
 trial's Publication Cover, replacing Ghost's factory-default pink. Source
