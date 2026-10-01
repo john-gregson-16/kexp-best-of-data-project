@@ -385,14 +385,27 @@ story in `DESIGN_DECISIONS.md`.
   being deliberately held off (see "Domain and hosting decision" above).
   Placeholder text in the About draft stays as-is until then; not a bug,
   don't "fix" it without this context.
-- A logo. Concept as of 2026-09-27: a shovel blended into a Gibson-SG-style
-  guitar headstock (riffs on "dig" + Carrie Brownstein/Sleater-Kinney's
-  usual guitar), inside a circle badge -- no line-chart/data motif, kept
-  deliberately simple. No asset built yet. Confirmed directly in both
-  themes' own header code (`{{#if @site.logo}}`): a Publication logo
-  replaces the site-title text, it doesn't sit alongside it -- if both are
-  wanted together, the wordmark needs to be baked into the logo image
-  itself. Publication icon is a separate field (small square, favicon +
-  Source's sidebar "about" avatar only, invisible on Casper) -- tested live
-  by uploading one of two placeholder style references there, confirmed
-  working correctly.
+- **Logo: built and live (2026-10-01).** A shovel blended into a 1972
+  Gibson-SG-style headstock, inside a circle that doubles as "the
+  ground" -- the shovel blade deliberately breaks through the ring (ties
+  back to "digging," the concept's real hook). Built entirely by the
+  owner in Inkscape, traced from a real SG headstock photo, with the
+  headstock's subtle top-center "mustache" notch and a curved
+  neck-to-blade shoulder transition both hand-fixed after the initial
+  auto-trace smoothed them away. Scale-legibility was actually tested
+  (not assumed) against the owner's own stated bar ("roughly a
+  headstock w/ or w/o tuners, roughly a shovel, shovel reads as breaking
+  through the circle") using an HTML harness rendering the real exported
+  PNG at 16-120px -- passes cleanly at 48-60px, Ghost's actual icon
+  floor. **Both the black (transparent bg) and white (transparent bg)
+  versions exist**; black is uploaded live as both the Publication logo
+  and Publication icon on both Ghost instances (replacing the old
+  Rebel-Alliance placeholder icon). The white version isn't placed
+  anywhere yet -- candidate use is overlaying it on the hero cover
+  gradient as a title-page treatment, not decided. Confirmed directly in
+  both themes' own header code (`{{#if @site.logo}}`): a Publication
+  logo replaces the site-title text, it doesn't sit alongside it -- the
+  wordmark would need to be baked into the image if both were wanted
+  together, which the owner decided not to do (mark only, no wordmark).
+  Publication icon is a separate field (small square, favicon + Source's
+  sidebar "about" avatar only, invisible on Casper).
